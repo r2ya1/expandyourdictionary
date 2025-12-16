@@ -1,1 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Word Bomb Helper</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f0f0f;
+      color: #eee;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 22px;
+    }
+    input {
+      font-size: 18px;
+      padding: 10px;
+      width: 220px;
+      margin-top: 10px;
+    }
+    #results {
+      margin-top: 15px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    .footer {
+      margin-top: 20px;
+      font-size: 12px;
+      opacity: 0.6;
+    }
+  </style>
+</head>
 
+<body>
+  <h1>Unofficial Word Bomb Helper</h1>
+
+  <input
+    id="pattern"
+    placeholder="Enter letters (IA)"
+    oninput="findWords()"
+  >
+
+  <div id="results"></div>
+
+  <div class="footer">
+    Not affiliated with jklm.fun
+  </div>
+
+  <script>
+    // Placeholder words — dictionary comes later
+    const words = ["dial", "diamond", "radiator", "variation"];
+
+    function findWords() {
+      const p = document.getElementById("pattern").value.toLowerCase();
+      const matches = words.filter(w => w.includes(p));
+      document.getElementById("results").innerHTML =
+        matches.length ? matches.join("<br>") : "";
+    }
+  </script>
+</body>
+</html>
