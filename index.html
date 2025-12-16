@@ -137,11 +137,8 @@ let lastMatches = [];
 let lastHyphenMatches = [];
 
 // Load dictionaries
-140
-  103
-    141
-      "https://cdn.jsdelivr.net/gh/r2ya1/expandyourdictionary@main/jklm-wordlist.json")
-.then(r => r.jsontext
+  fetch("https://cdn.jsdelivr.net/gh/r2ya1/expandyourdictionary@main/jklm-wordlist.json")
+.then(r => r.text())
 .then(text => { words = text.split(", ").map(w => w.trim()).filter(Boolean); });
 function shuffleArray(array) { return array.sort(() => Math.random() - 0.5); }
 
