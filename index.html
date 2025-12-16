@@ -6,10 +6,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 :root {
-  --bg: #0f0f0f;
+  --bg: linear-gradient(135deg,#0f0f0f,#1a1a1a);
   --text: #eee;
-  --highlight: #ff6;
-  --input-bg: #1a1a1a;
+  --highlight: #0ff;
+  --input-bg: #222;
 }
 body {
   margin:0;
@@ -17,13 +17,22 @@ body {
   background: var(--bg);
   color: var(--text);
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  padding: 20px;
+  min-height: 100vh;
   transition: all 0.3s;
 }
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+}
 h1 {
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  text-shadow: 0 0 8px #0ff;
 }
 input, select, button {
   padding: 10px;
@@ -35,52 +44,87 @@ input, select, button {
 input { width: 250px; background: var(--input-bg); color: var(--text);}
 select { background: var(--input-bg); color: var(--text);}
 button { cursor: pointer; background: var(--highlight); color: #000; }
-#results { margin-top: 20px; width: 90%; max-width: 500px; }
+#results { margin-top: 20px; width: 100%; }
 .section { margin-bottom: 15px; }
 .section h2 { margin-bottom: 5px; color: var(--highlight);}
 .word { background: rgba(255,255,255,0.05); padding: 5px 8px; margin:2px; display:inline-block; border-radius:4px; transition: all 0.2s; }
 .word:hover { background: rgba(255,255,255,0.15);}
+.highlight { background-color: rgba(255,255,0,0.4); border-radius:2px; padding:0 2px;}
 .footer { margin-top: 20px; font-size: 12px; opacity:0.6;}
+a.dictionary-link { color: var(--highlight); text-decoration: underline;}
+
+/* Animated gradient for original mode */
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.word.original {
+  background: linear-gradient(90deg, #0ff, #6f0, #ff0, #0ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% 200%;
+  animation: gradientShift 5s ease infinite;
+  text-shadow: 0 0 4px #0ff, 0 0 6px #0ff;
+}
 </style>
 </head>
 <body>
-<h1>Word Bomb Learner</h1>
+<div class="container">
+  <h1>Word Bomb Learner</h1>
 
-<input id="pattern" placeholder="Enter letters">
-<select id="mode" onchange="applyMode()">
-  <option value="original">Original</option>
-  <option value="dark">Dark</option>
-  <option value="light">Light</option>
-</select>
+  <input id="pattern" placeholder="Enter letters">
+  <select id="mode" onchange="applyMode()">
+    <option value="original">Original</option>
+    <option value="dark">Dark</option>
+    <option value="light">Light</option>
+  </select>
 
-<div id="results"></div>
-<div class="footer">Made by r2ya1</div>
+  <div id="results"></div>
+  <div class="footer">
+    Made by r2ya1 | Full dictionary: 
+    <a class="dictionary-link" href="https://pages.cs.wisc.edu/~o-laughl/csw15.txt" target="_blank">csw15.txt</a> | Hyphen dictionary: 
+    <a class="dictionary-link" href="https://raw.githubusercontent.com/carreb/bombparty-practice/main/dict/hyphen-dict.txt" target="_blank">hyphen-dict.txt</a>
+  </div>
+</div>
 
 <script>
-// Small starter dictionary
-const words = [
-  "dial", "diamond", "radiator", "ice", "icicle", "apple", "banana",
-  "orange", "grape", "melon", "pear", "peach", "plum", "berry",
-  "cherry", "date", "kiwi", "lemon", "lime", "mango", "nectar",
-  "nut", "olive", "papaya", "pear", "quince", "raisin", "straw",
-  "tangerine", "tomato", "watermelon", "long-word-example", "hi"
-];
-
+let words = [];
+let hyphenWords = [];
 let lastPattern = "";
 let lastMatches = [];
 
-function shuffleArray(array) {
-  return array.sort(() => Math.random() - 0.5);
+// Load full dictionary
+fetch("https://pages.cs.wisc.edu/~o-laughl/csw15.txt")
+  .then(r => r.text())
+  .then(text => {
+    words = text.split("\n").map(w => w.trim().toLowerCase()).filter(Boolean);
+    console.log(`Loaded ${words.length} words`);
+  }).catch(err => console.error("Failed to load dictionary:", err));
+
+// Load hyphen dictionary
+fetch("https://raw.githubusercontent.com/carreb/bombparty-practice/main/dict/hyphen-dict.txt")
+  .then(r => r.text())
+  .then(text => {
+    hyphenWords = text.split("\n").map(w => w.trim().toLowerCase()).filter(Boolean);
+    console.log(`Loaded ${hyphenWords.length} hyphenated words`);
+  }).catch(err => console.error("Failed to load hyphen dictionary:", err));
+
+function shuffleArray(array) { return array.sort(() => Math.random() - 0.5); }
+
+function highlightMatch(word, pattern){
+  if(!pattern) return word;
+  const regex = new RegExp(`(${pattern})`, 'gi');
+  return word.replace(regex, '<span class="highlight">$1</span>');
 }
 
 function displayWords(matches){
   const resultsDiv = document.getElementById("results");
   resultsDiv.innerHTML = "";
 
-  // Longest words (top 3)
   const longest = [...matches].sort((a,b)=>b.length-a.length).slice(0,3);
   const shortest = [...matches].sort((a,b)=>a.length-b.length).slice(0,3);
-  const hyphenated = matches.filter(w=>w.includes('-')).slice(0,1);
+  const hyphenated = hyphenWords.filter(w=>w.includes(lastPattern)).slice(0,3);
   const random = shuffleArray(matches).slice(0,3);
 
   const sections = [
@@ -99,7 +143,12 @@ function displayWords(matches){
     sec.list.forEach(word=>{
       const wspan = document.createElement("span");
       wspan.className="word";
-      wspan.textContent = word;
+      wspan.innerHTML = highlightMatch(word, lastPattern);
+
+      if(document.getElementById("mode").value === "original"){
+        wspan.classList.add("original");
+      }
+
       secDiv.appendChild(wspan);
     });
     resultsDiv.appendChild(secDiv);
@@ -114,9 +163,9 @@ function findWords(){
   displayWords(lastMatches);
 }
 
-// Refresh random section with "=" key
+// Refresh random section with Left Control key
 document.addEventListener("keydown", e=>{
-  if(e.key==="=" && lastMatches.length){
+  if(e.code === "ControlLeft" && lastMatches.length){
     displayWords(lastMatches);
   }
 });
@@ -143,7 +192,6 @@ function applyMode(){
   }
 }
 
-// Event listener for typing
 document.getElementById("pattern").addEventListener("input", findWords);
 </script>
 </body>
