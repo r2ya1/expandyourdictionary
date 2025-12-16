@@ -44,11 +44,11 @@ body {
   border-radius: 16px;
   width: min(420px, 90%);
   box-shadow: 0 20px 40px rgba(0,0,0,.4);
+  text-align: center;
 }
 
 h1 {
   margin-top: 0;
-  text-align: center;
 }
 
 input, select, button {
@@ -72,7 +72,7 @@ button {
   border-bottom: 1px solid rgba(255,255,255,.1);
 }
 
-mark {
+.highlight {
   background: var(--accent);
   color: #000;
   border-radius: 4px;
@@ -81,14 +81,13 @@ mark {
 
 .footer {
   margin-top: 10px;
-  text-align: center;
   font-size: 12px;
   opacity: .6;
 }
+
 .notice {
   font-size: 12px;
   color: #f55;
-  text-align: center;
   margin-bottom: 10px;
 }
 </style>
@@ -105,18 +104,18 @@ mark {
 
   <input id="pattern" placeholder="Enter letters">
 
-  <select id="matchMode">
+  <select id="filterMode">
     <option value="contains">Contains</option>
     <option value="starts">Starts With</option>
   </select>
 
-  <select id="listMode">
+  <select id="hyphenMode">
     <option value="casual">Casual Words</option>
     <option value="long">Long Words Only</option>
     <option value="hyphen">Hyphen Only</option>
   </select>
 
-  <select id="theme" onchange="setTheme(this.value)">
+  <select id="mode" onchange="setTheme(this.value)">
     <option value="original">Original</option>
     <option value="dark">Dark</option>
     <option value="light">Light</option>
@@ -125,77 +124,103 @@ mark {
   <div id="results"></div>
 
   <div class="footer">
-    Made by r2ya¹ — Ctrl to refresh active list
+    Made by r2ya1 — Ctrl to refresh active list
   </div>
 </div>
 
 <script>
-let mainWords = [];
+let words = [];
 let hyphenWords = [];
-let cache = [];
-let activeList = 'casual';
+let lastPattern = "";
+let lastMatches = [];
 
-fetch("csw15.txt").then(r=>r.text()).then(t=>{
-  mainWords = t.split(/\r?\n/).filter(Boolean);
-});
+// Load full dictionary via CORS proxy
+fetch("https://cors-anywhere.herokuapp.com/https://pages.cs.wisc.edu/~o-laughl/csw15.txt")
+  .then(r => r.text())
+  .then(text => { words = text.split("\n").map(w => w.trim().toLowerCase()).filter(Boolean); });
 
-fetch("hyphen-dict.txt").then(r=>r.text()).then(t=>{
-  hyphenWords = t.split(/\r?\n/).filter(Boolean);
-});
+fetch("https://raw.githubusercontent.com/carreb/bombparty-practice/main/dict/hyphen-dict.txt")
+  .then(r => r.text())
+  .then(text => { hyphenWords = text.split("\n").map(w => w.trim().toLowerCase()).filter(Boolean); });
 
-const pattern = document.getElementById("pattern");
-const matchMode = document.getElementById("matchMode");
-const listMode = document.getElementById("listMode");
-const results = document.getElementById("results");
+function shuffleArray(array) { return array.sort(() => Math.random() - 0.5); }
 
-pattern.addEventListener("input", findWords);
-listMode.addEventListener("change", ()=>{ 
-  activeList = listMode.value; 
-  findWords(); 
-});
-matchMode.addEventListener("change", findWords);
-
-document.addEventListener("keydown", e=>{
-  if(e.key === "Control") randomize();
-});
-
-function setTheme(t){
-  document.body.className = t === "original" ? "" : t;
+function highlightMatch(word, pattern){
+  if(!pattern) return word;
+  const regex = new RegExp(`(${pattern})`, 'gi');
+  return word.replace(regex, '<span class="highlight">$1</span>');
 }
 
-function highlight(word, p){
-  if(!p) return word;
-  const r = new RegExp(p, "ig");
-  return word.replace(r, m=>`<mark>${m}</mark>`);
-}
+function displayWords(matches){
+  const resultsDiv = document.getElementById("results");
+  resultsDiv.innerHTML = "";
 
-function randomize(){
-  if(cache.length) cache = cache.sort(()=>Math.random() - 0.5);
-  render(cache);
+  const hyphenMode = document.getElementById("hyphenMode").value;
+
+  // Filter hyphen words
+  let hyphenList = [];
+  if(hyphenMode === "casual") hyphenList = hyphenWords.filter(w=>w.length <=6 && w.includes(lastPattern));
+  else if(hyphenMode === "long") hyphenList = hyphenWords.filter(w=>w.length >=8 && w.includes(lastPattern));
+  else if(hyphenMode === "hyphen") hyphenList = hyphenWords.filter(w=>w.includes('-') && w.includes(lastPattern));
+
+  const longest = [...matches].sort((a,b)=>b.length-a.length).slice(0,3);
+  const shortest = [...matches].sort((a,b)=>a.length-b.length).slice(0,3);
+  const random = shuffleArray(matches).slice(0,3);
+
+  let sections = [];
+  if(hyphenMode === "hyphen") {
+    if(hyphenList.length) sections.push({title:"Hyphenated", list:hyphenList});
+  } else {
+    if(longest.length) sections.push({title:"Longest", list:longest});
+    if(shortest.length) sections.push({title:"Shortest", list:shortest});
+    if(hyphenList.length) sections.push({title:"Hyphenated", list:hyphenList});
+    if(random.length) sections.push({title:"Random", list:random});
+  }
+
+  sections.forEach(sec=>{
+    const secDiv = document.createElement("div");
+    secDiv.className = "section";
+    const h2 = document.createElement("h2");
+    h2.textContent = sec.title;
+    secDiv.appendChild(h2);
+    sec.list.forEach(word=>{
+      const wspan = document.createElement("span");
+      wspan.className="word";
+      wspan.innerHTML = highlightMatch(word, lastPattern);
+      if(document.getElementById("mode").value === "original") wspan.classList.add("original");
+      secDiv.appendChild(wspan);
+    });
+    resultsDiv.appendChild(secDiv);
+  });
 }
 
 function findWords(){
-  const p = pattern.value.toLowerCase();
-  const match = matchMode.value;
+  const pattern = document.getElementById("pattern").value.toLowerCase();
+  const filterMode = document.getElementById("filterMode").value;
+  if(!pattern){ document.getElementById("results").innerHTML=""; return; }
+  lastPattern = pattern;
 
-  let source;
-  if(activeList === "hyphen") source = hyphenWords;
-  else if(activeList === "long") source = mainWords.filter(w=>w.length >= 8);
-  else source = mainWords; // casual
+  if(filterMode === "contains") lastMatches = words.filter(w=>w.includes(pattern));
+  else if(filterMode === "starts") lastMatches = words.filter(w=>w.startsWith(pattern));
 
-  cache = source.filter(w=>{
-    if(match === "starts") return w.startsWith(p);
-    return w.includes(p);
-  }).slice(0,30);
-
-  render(cache);
+  displayWords(lastMatches);
 }
 
-function render(words){
-  results.innerHTML = words.map(w => 
-    `<div class="word">${highlight(w, pattern.value)}</div>`
-  ).join("");
+// Refresh active list with Left Ctrl
+document.addEventListener("keydown", e=>{
+  if(e.code === "ControlLeft" && lastMatches.length){
+    displayWords(lastMatches);
+  }
+});
+
+// Theme selector
+function setTheme(value){
+  document.body.className = value;
 }
+
+document.getElementById("pattern").addEventListener("input", findWords);
+document.getElementById("filterMode").addEventListener("change", findWords);
+document.getElementById("hyphenMode").addEventListener("change", findWords);
 </script>
 </body>
 </html>
