@@ -51,8 +51,6 @@ button { cursor: pointer; background: var(--highlight); color: #000; }
 .word:hover { background: rgba(255,255,255,0.15);}
 .highlight { background-color: rgba(255,255,0,0.4); border-radius:2px; padding:0 2px;}
 .footer { margin-top: 20px; font-size: 12px; opacity:0.6;}
-a.dictionary-link { color: var(--highlight); text-decoration: underline;}
-
 /* Animated gradient for original mode */
 @keyframes gradientShift {
   0% { background-position: 0% 50%; }
@@ -74,18 +72,27 @@ a.dictionary-link { color: var(--highlight); text-decoration: underline;}
   <h1>Word Bomb Learner</h1>
 
   <input id="pattern" placeholder="Enter letters">
+  
   <select id="mode" onchange="applyMode()">
     <option value="original">Original</option>
     <option value="dark">Dark</option>
     <option value="light">Light</option>
   </select>
+  
+  <select id="filterMode">
+    <option value="contains">Contains</option>
+    <option value="starts">Starts With</option>
+  </select>
+
+  <select id="hyphenMode">
+    <option value="all">All</option>
+    <option value="casual">Casual Words</option>
+    <option value="long">Longest Only</option>
+    <option value="hyphen">Hyphen Only</option>
+  </select>
 
   <div id="results"></div>
-  <div class="footer">
-    Made by r2ya1 | Full dictionary: 
-    <a class="dictionary-link" href="https://pages.cs.wisc.edu/~o-laughl/csw15.txt" target="_blank">csw15.txt</a> | Hyphen dictionary: 
-    <a class="dictionary-link" href="https://raw.githubusercontent.com/carreb/bombparty-practice/main/dict/hyphen-dict.txt" target="_blank">hyphen-dict.txt</a>
-  </div>
+  <div class="footer">Made by r2ya1</div>
 </div>
 
 <script>
@@ -94,8 +101,8 @@ let hyphenWords = [];
 let lastPattern = "";
 let lastMatches = [];
 
-// Load full dictionary
-fetch("https://pages.cs.wisc.edu/~o-laughl/csw15.txt")
+// Load full dictionary via CORS proxy
+fetch("https://cors-anywhere.herokuapp.com/https://pages.cs.wisc.edu/~o-laughl/csw15.txt")
   .then(r => r.text())
   .then(text => {
     words = text.split("\n").map(w => w.trim().toLowerCase()).filter(Boolean);
@@ -122,9 +129,17 @@ function displayWords(matches){
   const resultsDiv = document.getElementById("results");
   resultsDiv.innerHTML = "";
 
+  let hyphenMode = document.getElementById("hyphenMode").value;
+
+  let hyphenList = [];
+  if(hyphenMode === "all") hyphenList = hyphenWords.filter(w => w.includes(lastPattern));
+  else if(hyphenMode === "casual") hyphenList = hyphenWords.filter(w => w.length <= 6 && w.includes(lastPattern));
+  else if(hyphenMode === "long") hyphenList = hyphenWords.filter(w => w.length >= 8 && w.includes(lastPattern));
+  else if(hyphenMode === "hyphen") hyphenList = hyphenWords.filter(w => w.includes('-') && w.includes(lastPattern));
+
   const longest = [...matches].sort((a,b)=>b.length-a.length).slice(0,3);
   const shortest = [...matches].sort((a,b)=>a.length-b.length).slice(0,3);
-  const hyphenated = hyphenWords.filter(w=>w.includes(lastPattern)).slice(0,3);
+  const hyphenated = hyphenList.slice(0,3);
   const random = shuffleArray(matches).slice(0,3);
 
   const sections = [
@@ -135,6 +150,7 @@ function displayWords(matches){
   ];
 
   sections.forEach(sec=>{
+    if(sec.list.length === 0) return; // skip empty
     const secDiv = document.createElement("div");
     secDiv.className = "section";
     const h2 = document.createElement("h2");
@@ -144,11 +160,7 @@ function displayWords(matches){
       const wspan = document.createElement("span");
       wspan.className="word";
       wspan.innerHTML = highlightMatch(word, lastPattern);
-
-      if(document.getElementById("mode").value === "original"){
-        wspan.classList.add("original");
-      }
-
+      if(document.getElementById("mode").value === "original") wspan.classList.add("original");
       secDiv.appendChild(wspan);
     });
     resultsDiv.appendChild(secDiv);
@@ -157,9 +169,13 @@ function displayWords(matches){
 
 function findWords(){
   const pattern = document.getElementById("pattern").value.toLowerCase();
+  const filterMode = document.getElementById("filterMode").value;
   if(!pattern){ document.getElementById("results").innerHTML=""; return; }
   lastPattern = pattern;
-  lastMatches = words.filter(w=>w.includes(pattern));
+
+  if(filterMode === "contains") lastMatches = words.filter(w=>w.includes(pattern));
+  else if(filterMode === "starts") lastMatches = words.filter(w=>w.startsWith(pattern));
+
   displayWords(lastMatches);
 }
 
@@ -193,6 +209,8 @@ function applyMode(){
 }
 
 document.getElementById("pattern").addEventListener("input", findWords);
+document.getElementById("filterMode").addEventListener("change", findWords);
+document.getElementById("hyphenMode").addEventListener("change", findWords);
 </script>
 </body>
 </html>
