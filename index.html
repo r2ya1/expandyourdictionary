@@ -101,11 +101,6 @@ button {
 
 <body>
 <div class="container">
-  <div class="notice">
-    To use the site properly, please request access here: 
-    <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank" style="color: var(--accent);">CORS Demo</a>
-  </div>
-
   <h1>Word Bomb Learner</h1>
 
   <input id="pattern" placeholder="Enter letters">
@@ -142,13 +137,12 @@ let lastMatches = [];
 let lastHyphenMatches = [];
 
 // Load dictionaries
-fetch("https://cors-anywhere.herokuapp.com/https://pages.cs.wisc.edu/~o-laughl/csw15.txt")
-  .then(r => r.text())
-  .then(text => { words = text.split("\n").map(w => w.trim().toLowerCase()).filter(Boolean); });
-
-fetch("https://raw.githubusercontent.com/carreb/bombparty-practice/main/dict/hyphen-dict.txt")
-  .then(r => r.text())
-  .then(text => { hyphenWords = text.split("\n").map(w => w.trim().toLowerCase()).filter(Boolean); });
+140
+  103
+    141
+      "https://cdn.jsdelivr.net/gh/r2ya1/expandyourdictionary@main/jklm-wordlist.json")
+.then(r => r.json())
+.then(data => { words = data.toString().split(", ").map(w => w.trim()).filter(Boolean); });
 
 function shuffleArray(array) { return array.sort(() => Math.random() - 0.5); }
 
