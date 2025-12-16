@@ -35,28 +35,30 @@
 <body>
   <h1>Unofficial Word Bomb Helper</h1>
 
-  <input
-    id="pattern"
-    placeholder="Enter letters (IA)"
-    oninput="findWords()"
-  >
+ <input id="pattern" placeholder="Enter letters (IA)" oninput="findWords()">
 
-  <div id="results"></div>
+<select id="mode" onchange="findWords()">
+  <option value="contains">Contains</option>
+  <option value="starts">Starts With</option>
+</select>
 
-  <div class="footer">
-    Not affiliated with jklm.fun
-  </div>
+<div id="results"></div>
 
-  <script>
-    // Placeholder words — dictionary comes later
-    const words = ["dial", "diamond", "radiator", "variation"];
+<script>
+const words = ["dial", "diamond", "radiator", "variation"];
 
-    function findWords() {
-      const p = document.getElementById("pattern").value.toLowerCase();
-      const matches = words.filter(w => w.includes(p));
-      document.getElementById("results").innerHTML =
-        matches.length ? matches.join("<br>") : "";
-    }
-  </script>
-</body>
-</html>
+function findWords() {
+  const p = document.getElementById("pattern").value.toLowerCase();
+  const mode = document.getElementById("mode").value;
+
+  let matches;
+  if (mode === "contains") {
+    matches = words.filter(w => w.includes(p));
+  } else if (mode === "starts") {
+    matches = words.filter(w => w.startsWith(p));
+  }
+
+  document.getElementById("results").innerHTML =
+    matches.length ? matches.join("<br>") : "";
+}
+</script>
