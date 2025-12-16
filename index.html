@@ -3,214 +3,199 @@
 <head>
 <meta charset="UTF-8">
 <title>Word Bomb Learner</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
 :root {
-  --bg: linear-gradient(135deg,#0f0f0f,#1a1a1a);
-  --text: #eee;
-  --highlight: #0ff;
-  --input-bg: #222;
+  --bg: radial-gradient(circle at top, #1a1f3c, #0b0d1a);
+  --card: rgba(255,255,255,0.08);
+  --text: #e8e8ff;
+  --accent: #7f8cff;
 }
+
+body.light {
+  --bg: #ffffff;
+  --card: #f2f2f2;
+  --text: #111;
+  --accent: #5b6cff;
+}
+
+body.dark {
+  --bg: #000;
+  --card: #111;
+  --text: #eee;
+  --accent: #888;
+}
+
 body {
-  margin:0;
-  font-family: Arial, sans-serif;
+  margin: 0;
+  min-height: 100vh;
   background: var(--bg);
   color: var(--text);
+  font-family: system-ui, sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  transition: all 0.3s;
 }
+
 .container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 90%;
-  max-width: 500px;
+  background: var(--card);
+  padding: 20px;
+  border-radius: 16px;
+  width: min(420px, 90%);
+  box-shadow: 0 20px 40px rgba(0,0,0,.4);
+}
+
+h1 {
+  margin-top: 0;
   text-align: center;
 }
-h1 {
-  margin-bottom: 15px;
-  text-shadow: 0 0 8px #0ff;
-}
+
 input, select, button {
+  width: 100%;
   padding: 10px;
-  margin: 5px;
-  font-size: 16px;
-  border-radius: 6px;
+  margin-top: 8px;
+  border-radius: 8px;
   border: none;
+  font-size: 16px;
 }
-input { width: 250px; background: var(--input-bg); color: var(--text);}
-select { background: var(--input-bg); color: var(--text);}
-button { cursor: pointer; background: var(--highlight); color: #000; }
-#results { margin-top: 20px; width: 100%; }
-.section { margin-bottom: 15px; }
-.section h2 { margin-bottom: 5px; color: var(--highlight);}
-.word { background: rgba(255,255,255,0.05); padding: 5px 8px; margin:2px; display:inline-block; border-radius:4px; transition: all 0.2s; }
-.word:hover { background: rgba(255,255,255,0.15);}
-.highlight { background-color: rgba(255,255,0,0.4); border-radius:2px; padding:0 2px;}
-.footer { margin-top: 20px; font-size: 12px; opacity:0.6;}
-/* Animated gradient for original mode */
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+
+button {
+  background: var(--accent);
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
 }
-.word.original {
-  background: linear-gradient(90deg, #0ff, #6f0, #ff0, #0ff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-size: 200% 200%;
-  animation: gradientShift 5s ease infinite;
-  text-shadow: 0 0 4px #0ff, 0 0 6px #0ff;
+
+.word {
+  padding: 6px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+
+mark {
+  background: var(--accent);
+  color: #000;
+  border-radius: 4px;
+  padding: 0 2px;
+}
+
+.footer {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 12px;
+  opacity: .6;
+}
+.notice {
+  font-size: 12px;
+  color: #f55;
+  text-align: center;
+  margin-bottom: 10px;
 }
 </style>
 </head>
+
 <body>
 <div class="container">
+  <div class="notice">
+    To use the site properly, please request access here: 
+    <a href="https://cors-anywhere.herokuapp.com/corsdemo" target="_blank" style="color: var(--accent);">CORS Demo</a>
+  </div>
+
   <h1>Word Bomb Learner</h1>
 
   <input id="pattern" placeholder="Enter letters">
-  
-  <select id="mode" onchange="applyMode()">
-    <option value="original">Original</option>
-    <option value="dark">Dark</option>
-    <option value="light">Light</option>
-  </select>
-  
-  <select id="filterMode">
+
+  <select id="matchMode">
     <option value="contains">Contains</option>
     <option value="starts">Starts With</option>
   </select>
 
-  <select id="hyphenMode">
-    <option value="all">All</option>
+  <select id="listMode">
     <option value="casual">Casual Words</option>
-    <option value="long">Longest Only</option>
+    <option value="long">Long Words Only</option>
     <option value="hyphen">Hyphen Only</option>
   </select>
 
+  <select id="theme" onchange="setTheme(this.value)">
+    <option value="original">Original</option>
+    <option value="dark">Dark</option>
+    <option value="light">Light</option>
+  </select>
+
   <div id="results"></div>
-  <div class="footer">Made by r2ya1</div>
+
+  <div class="footer">
+    Made by r2ya¹ — Ctrl to refresh active list
+  </div>
 </div>
 
 <script>
-let words = [];
+let mainWords = [];
 let hyphenWords = [];
-let lastPattern = "";
-let lastMatches = [];
+let cache = [];
+let activeList = 'casual';
 
-// Load full dictionary via CORS proxy
-fetch("https://cors-anywhere.herokuapp.com/https://pages.cs.wisc.edu/~o-laughl/csw15.txt")
-  .then(r => r.text())
-  .then(text => {
-    words = text.split("\n").map(w => w.trim().toLowerCase()).filter(Boolean);
-    console.log(`Loaded ${words.length} words`);
-  }).catch(err => console.error("Failed to load dictionary:", err));
+fetch("csw15.txt").then(r=>r.text()).then(t=>{
+  mainWords = t.split(/\r?\n/).filter(Boolean);
+});
 
-// Load hyphen dictionary
-fetch("https://raw.githubusercontent.com/carreb/bombparty-practice/main/dict/hyphen-dict.txt")
-  .then(r => r.text())
-  .then(text => {
-    hyphenWords = text.split("\n").map(w => w.trim().toLowerCase()).filter(Boolean);
-    console.log(`Loaded ${hyphenWords.length} hyphenated words`);
-  }).catch(err => console.error("Failed to load hyphen dictionary:", err));
+fetch("hyphen-dict.txt").then(r=>r.text()).then(t=>{
+  hyphenWords = t.split(/\r?\n/).filter(Boolean);
+});
 
-function shuffleArray(array) { return array.sort(() => Math.random() - 0.5); }
+const pattern = document.getElementById("pattern");
+const matchMode = document.getElementById("matchMode");
+const listMode = document.getElementById("listMode");
+const results = document.getElementById("results");
 
-function highlightMatch(word, pattern){
-  if(!pattern) return word;
-  const regex = new RegExp(`(${pattern})`, 'gi');
-  return word.replace(regex, '<span class="highlight">$1</span>');
+pattern.addEventListener("input", findWords);
+listMode.addEventListener("change", ()=>{ 
+  activeList = listMode.value; 
+  findWords(); 
+});
+matchMode.addEventListener("change", findWords);
+
+document.addEventListener("keydown", e=>{
+  if(e.key === "Control") randomize();
+});
+
+function setTheme(t){
+  document.body.className = t === "original" ? "" : t;
 }
 
-function displayWords(matches){
-  const resultsDiv = document.getElementById("results");
-  resultsDiv.innerHTML = "";
+function highlight(word, p){
+  if(!p) return word;
+  const r = new RegExp(p, "ig");
+  return word.replace(r, m=>`<mark>${m}</mark>`);
+}
 
-  let hyphenMode = document.getElementById("hyphenMode").value;
-
-  let hyphenList = [];
-  if(hyphenMode === "all") hyphenList = hyphenWords.filter(w => w.includes(lastPattern));
-  else if(hyphenMode === "casual") hyphenList = hyphenWords.filter(w => w.length <= 6 && w.includes(lastPattern));
-  else if(hyphenMode === "long") hyphenList = hyphenWords.filter(w => w.length >= 8 && w.includes(lastPattern));
-  else if(hyphenMode === "hyphen") hyphenList = hyphenWords.filter(w => w.includes('-') && w.includes(lastPattern));
-
-  const longest = [...matches].sort((a,b)=>b.length-a.length).slice(0,3);
-  const shortest = [...matches].sort((a,b)=>a.length-b.length).slice(0,3);
-  const hyphenated = hyphenList.slice(0,3);
-  const random = shuffleArray(matches).slice(0,3);
-
-  const sections = [
-    {title:"Longest", list:longest},
-    {title:"Shortest", list:shortest},
-    {title:"Hyphenated", list:hyphenated},
-    {title:"Random", list:random}
-  ];
-
-  sections.forEach(sec=>{
-    if(sec.list.length === 0) return; // skip empty
-    const secDiv = document.createElement("div");
-    secDiv.className = "section";
-    const h2 = document.createElement("h2");
-    h2.textContent = sec.title;
-    secDiv.appendChild(h2);
-    sec.list.forEach(word=>{
-      const wspan = document.createElement("span");
-      wspan.className="word";
-      wspan.innerHTML = highlightMatch(word, lastPattern);
-      if(document.getElementById("mode").value === "original") wspan.classList.add("original");
-      secDiv.appendChild(wspan);
-    });
-    resultsDiv.appendChild(secDiv);
-  });
+function randomize(){
+  if(cache.length) cache = cache.sort(()=>Math.random() - 0.5);
+  render(cache);
 }
 
 function findWords(){
-  const pattern = document.getElementById("pattern").value.toLowerCase();
-  const filterMode = document.getElementById("filterMode").value;
-  if(!pattern){ document.getElementById("results").innerHTML=""; return; }
-  lastPattern = pattern;
+  const p = pattern.value.toLowerCase();
+  const match = matchMode.value;
 
-  if(filterMode === "contains") lastMatches = words.filter(w=>w.includes(pattern));
-  else if(filterMode === "starts") lastMatches = words.filter(w=>w.startsWith(pattern));
+  let source;
+  if(activeList === "hyphen") source = hyphenWords;
+  else if(activeList === "long") source = mainWords.filter(w=>w.length >= 8);
+  else source = mainWords; // casual
 
-  displayWords(lastMatches);
+  cache = source.filter(w=>{
+    if(match === "starts") return w.startsWith(p);
+    return w.includes(p);
+  }).slice(0,30);
+
+  render(cache);
 }
 
-// Refresh random section with Left Control key
-document.addEventListener("keydown", e=>{
-  if(e.code === "ControlLeft" && lastMatches.length){
-    displayWords(lastMatches);
-  }
-});
-
-// Dark/light/original mode
-function applyMode(){
-  const mode = document.getElementById("mode").value;
-  const root = document.documentElement;
-  if(mode==="dark"){
-    root.style.setProperty("--bg","#0f0f0f");
-    root.style.setProperty("--text","#eee");
-    root.style.setProperty("--highlight","#ff6");
-    root.style.setProperty("--input-bg","#1a1a1a");
-  } else if(mode==="light"){
-    root.style.setProperty("--bg","#fff");
-    root.style.setProperty("--text","#000");
-    root.style.setProperty("--highlight","#f00");
-    root.style.setProperty("--input-bg","#ddd");
-  } else { // original
-    root.style.setProperty("--bg","linear-gradient(135deg,#0f0f0f,#1a1a1a)");
-    root.style.setProperty("--text","#eee");
-    root.style.setProperty("--highlight","#0ff");
-    root.style.setProperty("--input-bg","#222");
-  }
+function render(words){
+  results.innerHTML = words.map(w => 
+    `<div class="word">${highlight(w, pattern.value)}</div>`
+  ).join("");
 }
-
-document.getElementById("pattern").addEventListener("input", findWords);
-document.getElementById("filterMode").addEventListener("change", findWords);
-document.getElementById("hyphenMode").addEventListener("change", findWords);
 </script>
 </body>
 </html>
