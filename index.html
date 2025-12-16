@@ -137,13 +137,20 @@ let lastMatches = [];
 let lastHyphenMatches = [];
 
 // Load dictionaries
- fetch("https://cdn.jsdelivr.net/gh/r2ya1/expandyourdictionary@main/assets.json")
-  .then(r => r.json())
-  .then(json => {
-    const decoded = atob(json.data);
-    words = JSON.parse(decoded).map(w => w.toLowerCase());
+ fetch("https://raw.githubusercontent.com/r2ya1/expandyourdictionary/main/assets.json")
+  .then(response => {
+    if (!response.ok) throw new Error("Network response was not ok");
+    return response.json();
   })
-  .catch(err => console.error("Failed to load dictionary:", err));
+  .then(obj => {
+    const decoded = atob(obj.data);      // decode Base64
+    words = JSON.parse(decoded).map(w => w.toLowerCase());  // parse JSON & normalize
+    console.log("✅ Dictionary loaded:", words.length, "words");
+    console.log("First 5:", words.slice(0, 5));
+    console.log("Last 5:", words.slice(-5));
+  })
+  .catch(err => console.error("❌ Failed to load dictionary:", err));
+
 
 function shuffleArray(array) { return array.sort(() => Math.random() - 0.5); }
 
