@@ -136,23 +136,30 @@ let lastPattern = "";
 let lastMatches = [];
 let lastHyphenMatches = [];
 
-// Load dictionaries
- fetch("https://raw.githubusercontent.com/r2ya1/expandyourdictionary/main/assets.json")
+// Load dictionary
+fetch("https://raw.githubusercontent.com/r2ya1/expandyourdictionary/main/assets.json")
   .then(response => {
     if (!response.ok) throw new Error("Network response was not ok");
     return response.json();
   })
   .then(obj => {
-    const decoded = atob(obj.data);      // decode Base64
-    words = JSON.parse(decoded).map(w => w.toLowerCase());  // parse JSON & normalize
+    const decoded = atob(obj.data);
+
+    // Main word list
+    words = JSON.parse(decoded).map(w => w.toLowerCase());
+
+    // ✅ Extract hyphenated words ONCE
+    hyphenWords = words.filter(w => w.includes("-"));
+
     console.log("✅ Dictionary loaded:", words.length, "words");
-    console.log("First 5:", words.slice(0, 5));
-    console.log("Last 5:", words.slice(-5));
+    console.log("🔗 Hyphen words:", hyphenWords.length);
+    console.log("Hyphen sample:", hyphenWords.slice(0, 5));
   })
   .catch(err => console.error("❌ Failed to load dictionary:", err));
 
-
-function shuffleArray(array) { return array.sort(() => Math.random() - 0.5); }
+function shuffleArray(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
 
 function highlightMatch(word, pattern){
   if(!pattern) return word;
@@ -166,7 +173,7 @@ function displayWords(matches, hyphenList){
 
   const hyphenMode = document.getElementById("hyphenMode").value;
 
-  // Limit hyphen list to 3 words at a time
+  // Limit hyphen list to 3
   if(hyphenMode === "hyphen") hyphenList = hyphenList.slice(0,3);
 
   const longest = [...matches].sort((a,b)=>b.length-a.length).slice(0,3);
@@ -174,39 +181,55 @@ function displayWords(matches, hyphenList){
   const random = shuffleArray(matches).slice(0,3);
 
   let sections = [];
+
   if(hyphenMode === "hyphen") {
-    if(hyphenList.length) sections.push({title:"Hyphenated", list:shuffleArray(hyphenList)});
+    if(hyphenList.length)
+      sections.push({ title:"Hyphenated", list: hyphenList });
   } else {
-    if(longest.length) sections.push({title:"Longest", list:longest});
-    if(shortest.length) sections.push({title:"Shortest", list:shortest});
-    if(hyphenList.length) sections.push({title:"Hyphenated", list:hyphenList.slice(0,3)});
-    if(random.length) sections.push({title:"Random", list:random});
+    if(longest.length) sections.push({ title:"Longest", list: longest });
+    if(shortest.length) sections.push({ title:"Shortest", list: shortest });
+    if(hyphenList.length) sections.push({ title:"Hyphenated", list: hyphenList.slice(0,3) });
+    if(random.length) sections.push({ title:"Random", list: random });
   }
 
   sections.forEach(sec=>{
     const secDiv = document.createElement("div");
-    secDiv.className = "section";
     const h2 = document.createElement("h2");
     h2.textContent = sec.title;
     secDiv.appendChild(h2);
+
     sec.list.forEach(word=>{
       const wspan = document.createElement("span");
-      wspan.className="word";
+      wspan.className = "word";
       wspan.innerHTML = highlightMatch(word, lastPattern);
-      if(document.getElementById("mode").value === "original") wspan.classList.add("original");
       secDiv.appendChild(wspan);
     });
+
     resultsDiv.appendChild(secDiv);
   });
 }
 
 function filterHyphenWords(pattern){
   const hyphenMode = document.getElementById("hyphenMode").value;
-  let filtered = [];
+  const filterMode = document.getElementById("filterMode").value;
 
-  if(hyphenMode === "casual") filtered = hyphenWords.filter(w=>w.length <=6 && w.includes(pattern));
-  else if(hyphenMode === "long") filtered = hyphenWords.filter(w=>w.length >=8 && w.includes(pattern));
-  else if(hyphenMode === "hyphen") filtered = hyphenWords.filter(w=>w.includes('-') && w.includes(pattern));
+  let filtered = hyphenWords;
+
+  // Pattern filter
+  if(filterMode === "contains") {
+    filtered = filtered.filter(w => w.includes(pattern));
+  } else {
+    filtered = filtered.filter(w => w.startsWith(pattern));
+  }
+
+  // Length rules
+  if(hyphenMode === "casual") {
+    filtered = filtered.filter(w => w.length <= 8);
+  }
+  else if(hyphenMode === "long") {
+    filtered = filtered.filter(w => w.length >= 10);
+  }
+  // hyphen mode = already filtered
 
   return shuffleArray(filtered);
 }
@@ -214,17 +237,25 @@ function filterHyphenWords(pattern){
 function findWords(){
   const pattern = document.getElementById("pattern").value.toLowerCase();
   const filterMode = document.getElementById("filterMode").value;
-  if(!pattern){ document.getElementById("results").innerHTML=""; return; }
+
+  if(!pattern){
+    document.getElementById("results").innerHTML = "";
+    return;
+  }
+
   lastPattern = pattern;
 
-  if(filterMode === "contains") lastMatches = words.filter(w=>w.includes(pattern));
-  else if(filterMode === "starts") lastMatches = words.filter(w=>w.startsWith(pattern));
+  if(filterMode === "contains") {
+    lastMatches = words.filter(w => w.includes(pattern));
+  } else {
+    lastMatches = words.filter(w => w.startsWith(pattern));
+  }
 
   lastHyphenMatches = filterHyphenWords(pattern);
   displayWords(lastMatches, lastHyphenMatches);
 }
 
-// Refresh active list with Left Ctrl key
+// Ctrl refresh
 document.addEventListener("keydown", e=>{
   if(e.code === "ControlLeft" && lastPattern){
     lastHyphenMatches = filterHyphenWords(lastPattern);
@@ -232,7 +263,7 @@ document.addEventListener("keydown", e=>{
   }
 });
 
-// Theme selector
+// Theme switch
 function setTheme(value){
   document.body.className = value;
 }
