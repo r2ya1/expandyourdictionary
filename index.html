@@ -808,19 +808,6 @@
       <div class="hero-panel">
         <div class="hero-grid">
           <div class="hero-copy">
-            <h2>Train faster. Search cleaner. Practice smarter.</h2>
-            <p>
-              Use the word finder to explore matches, then jump into a separate practice mode with a prompt generator,
-              live timer, answer checking, lives, and smoother casual play.
-            </p>
-
-            <div class="hero-badges">
-              <span class="badge">Word finder</span>
-              <span class="badge">Playable practice mode</span>
-              <span class="badge">Lives + timer options</span>
-              <span class="badge">Update log built in</span>
-            </div>
-
             <div class="menu-actions">
               <button class="menu-btn primary" id="openFinderBtn">Open Word Finder</button>
               <button class="menu-btn secondary" id="openPracticeBtn">Enter Practice Mode</button>
@@ -835,6 +822,7 @@
                 <li>Prompt difficulty uses a minimum solves rule, defaulting to 500.</li>
                 <li>Lives can be infinite or set from 1 to 10.</li>
               </ul>
+              <p style="margin-top: 10px;">-r2ya</p>
             </div>
 
             <div class="mini-card">
@@ -1090,11 +1078,6 @@
 
     const PRACTICE_OPPONENT_NAME = "samsicle";
 
-    // Hidden note for future log edits:
-    // - update .log-date
-    // - update .log-version
-    // - add/remove <li> entries only
-
     const practiceState = {
       running: false,
       round: 0,
@@ -1297,23 +1280,6 @@
       document.getElementById("finderMatchMode").value = "contains";
       document.getElementById("finderWordMode").value = "casual";
       runFinderSearch();
-    }
-
-    function getAllPromptCandidates(mode) {
-      const base = applyWordModeFilter(words, mode)
-        .filter(word => word.length >= 2)
-        .map(word => word.toLowerCase());
-
-      const prompts = new Set();
-
-      base.forEach(word => {
-        for (let i = 0; i < word.length - 1; i++) {
-          const pair = word.slice(i, i + 2);
-          if (/^[a-z'-]{2}$/.test(pair)) prompts.add(pair);
-        }
-      });
-
-      return [...prompts];
     }
 
     function buildPromptCacheForMode(mode) {
@@ -1561,6 +1527,7 @@
 
       const input = document.getElementById("practiceAnswerInput");
       const answer = input.value.toLowerCase().trim();
+      const currentMatchMode = practiceState.currentMatchMode;
 
       if (!answer) {
         setPracticeMessage("Type a word first.", "error");
@@ -1568,13 +1535,13 @@
         return;
       }
 
-      if (!answer.includes(practiceState.currentPrompt) && document.getElementById("practiceMatchMode").value === "contains") {
+      if (currentMatchMode === "contains" && !answer.includes(practiceState.currentPrompt)) {
         setPracticeMessage("That word does not contain the current prompt.", "error");
         focusPracticeInput();
         return;
       }
 
-      if (document.getElementById("practiceMatchMode").value === "starts" && !answer.startsWith(practiceState.currentPrompt)) {
+      if (currentMatchMode === "starts" && !answer.startsWith(practiceState.currentPrompt)) {
         setPracticeMessage("That word does not start with the current prompt.", "error");
         focusPracticeInput();
         return;
@@ -1594,42 +1561,60 @@
 
       practiceState.solvedWords.add(answer);
       input.value = "";
+
+      practiceState.running = false;
+      stopPracticeTimer();
+      practiceState.timerLeft = practiceState.timerSeconds;
       updatePracticeUi();
-      focusPracticeInput();
-      setPracticeMessage("Accepted.", "success");
+
+      setPracticeMessage("Accepted. Loading next prompt...", "success");
+
+      setTimeout(() => {
+        loadNextPrompt(false, false);
+      }, 150);
     }
 
     function resetPractice() {
       stopPracticeTimer();
-
       practiceState.running = false;
       practiceState.round = 0;
-      practiceState.timerSeconds = 8;
-      practiceState.timerLeft = 8;
+      practiceState.timerSeconds = Math.max(2, Math.min(60, Number(document.getElementById("practiceTimer").value) || 8));
+      practiceState.timerLeft = practiceState.timerSeconds;
       practiceState.currentPrompt = "";
       practiceState.currentMatches = [];
       practiceState.solvedWords = new Set();
-      practiceState.livesMode = "5";
-      practiceState.livesLeft = 5;
-      practiceState.infiniteLives = false;
-      practiceState.minMatches = 500;
-      practiceState.currentWordMode = "casual";
-      practiceState.currentMatchMode = "contains";
+      practiceState.livesMode = getLivesSetting();
+      practiceState.infiniteLives = practiceState.livesMode === "infinite";
+      practiceState.livesLeft = practiceState.infiniteLives ? Infinity : Number(practiceState.livesMode);
+      practiceState.minMatches = Math.max(1, Number(document.getElementById("practiceMinMatches").value) || 500);
+      practiceState.currentWordMode = document.getElementById("practiceWordMode").value;
+      practiceState.currentMatchMode = document.getElementById("practiceMatchMode").value;
 
-      document.getElementById("practiceTimer").value = "8";
-      document.getElementById("practiceLives").value = "5";
-      document.getElementById("practiceMinMatches").value = "500";
-      document.getElementById("practiceWordMode").value = "casual";
-      document.getElementById("practiceMatchMode").value = "contains";
       document.getElementById("practicePrompt").textContent = "--";
       document.getElementById("practiceAnswerInput").value = "";
       document.getElementById("practiceSampleWords").textContent = "Start practice to begin.";
-
       updatePracticeUi();
-      setPracticeMessage("Practice reset. Press Start Practice to begin.", "info");
+      setPracticeMessage("Practice reset.", "info");
     }
 
-    document.getElementById("themeMode").addEventListener("change", e => {
+    async function loadWords() {
+      try {
+        const response = await fetch("assets.json");
+        const obj = await response.json();
+        const decoded = atob(obj.data);
+        words = JSON.parse(decoded).map(word => String(word).toLowerCase());
+        buildAllPromptCaches();
+        runFinderSearch();
+        resetPractice();
+      } catch (error) {
+        console.error(error);
+        setPracticeMessage("Failed to load dictionary data.", "error");
+        document.getElementById("finderResults").innerHTML =
+          '<div class="empty-state">Could not load assets.json. Check your file path and JSON format.</div>';
+      }
+    }
+
+    document.getElementById("themeMode").addEventListener("change", (e) => {
       setTheme(e.target.value);
     });
 
@@ -1643,9 +1628,14 @@
     document.getElementById("finderPattern").addEventListener("input", runFinderSearch);
     document.getElementById("finderMatchMode").addEventListener("change", runFinderSearch);
     document.getElementById("finderWordMode").addEventListener("change", runFinderSearch);
+
     document.getElementById("shuffleFinderBtn").addEventListener("click", () => {
-      if (lastFinderMatches.length) renderFinderResults(lastFinderMatches);
+      const source = "abcdefghijklmnopqrstuvwxyz";
+      const pair = source[Math.floor(Math.random() * source.length)] + source[Math.floor(Math.random() * source.length)];
+      document.getElementById("finderPattern").value = pair;
+      runFinderSearch();
     });
+
     document.getElementById("clearFinderBtn").addEventListener("click", clearFinder);
 
     document.getElementById("startPracticeBtn").addEventListener("click", startPractice);
@@ -1653,50 +1643,15 @@
     document.getElementById("resetPracticeBtn").addEventListener("click", resetPractice);
     document.getElementById("practiceForm").addEventListener("submit", submitPracticeAnswer);
 
-    document.addEventListener("keydown", event => {
-      if (event.code === "ControlLeft" && document.getElementById("finderScreen").classList.contains("active")) {
-        if (lastFinderMatches.length) renderFinderResults(lastFinderMatches);
-      }
+    document.getElementById("logToggle").addEventListener("click", () => {
+      document.getElementById("logPanel").classList.add("open");
     });
 
-    const logToggle = document.getElementById("logToggle");
-    const logPanel = document.getElementById("logPanel");
-    const closeLog = document.getElementById("closeLog");
-
-    logToggle.addEventListener("click", () => {
-      logPanel.classList.toggle("open");
+    document.getElementById("closeLog").addEventListener("click", () => {
+      document.getElementById("logPanel").classList.remove("open");
     });
 
-    closeLog.addEventListener("click", () => {
-      logPanel.classList.remove("open");
-    });
-
-    fetch("https://raw.githubusercontent.com/r2ya1/expandyourdictionary/main/assets.json")
-      .then(response => {
-        if (!response.ok) throw new Error("Network response was not ok");
-        return response.json();
-      })
-      .then(obj => {
-        const decoded = atob(obj.data);
-        words = JSON.parse(decoded)
-          .map(word => String(word).toLowerCase().trim())
-          .filter(Boolean);
-
-        buildAllPromptCaches();
-        resetPractice();
-        clearFinder();
-      })
-      .catch(error => {
-        console.error("Failed to load dictionary:", error);
-        const finderResults = document.getElementById("finderResults");
-        finderResults.innerHTML = "";
-        finderResults.appendChild(buildResultCard("Error", [], ""));
-        finderResults.querySelector(".empty-state").textContent =
-          "Failed to load dictionary. Check assets.json and the fetch/decode format.";
-        document.getElementById("practiceSampleWords").textContent =
-          "Dictionary failed to load, so practice prompts cannot be generated.";
-        setPracticeMessage("Dictionary failed to load.", "error");
-      });
+    loadWords();
   </script>
 </body>
 </html>
