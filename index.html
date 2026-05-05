@@ -793,13 +793,13 @@
             <h2>Train faster. Search cleaner. Practice smarter.</h2>
             <p>
               Use the word finder to explore matches, then jump into a separate practice mode with a prompt generator,
-              live timer, answer checking, and round progression.
+              live timer, answer checking, lives, and smoother casual play.
             </p>
 
             <div class="hero-badges">
               <span class="badge">Word finder</span>
               <span class="badge">Playable practice mode</span>
-              <span class="badge">Hyphen + apostrophe support</span>
+              <span class="badge">Lives + timer options</span>
               <span class="badge">Update log built in</span>
             </div>
 
@@ -813,9 +813,9 @@
             <div class="mini-card">
               <h3>What’s fixed</h3>
               <ul>
-                <li>Casual mode is now neutral and does not hide long or special words.</li>
-                <li>Apostrophe words now have their own support.</li>
-                <li>Practice mode is now actually playable instead of just previewing answers.</li>
+                <li>Casual mode now loops more smoothly after failed prompts.</li>
+                <li>Prompt difficulty uses a minimum solves rule, defaulting to 500.</li>
+                <li>Lives can be infinite or set from 1 to 10.</li>
               </ul>
             </div>
 
@@ -823,7 +823,6 @@
               <h4>Practice opponent</h4>
               <p>
                 Your practice opponent is set to <strong>samsicle</strong>.
-                You can change that later in the code by editing the opponent constant.
               </p>
             </div>
           </div>
@@ -933,11 +932,23 @@
             <label class="label" for="practiceTimer">Bomb timer (seconds)</label>
             <input id="practiceTimer" type="number" min="2" max="60" value="8" />
 
-            <label class="label" for="practiceWpp">Max words per prompt</label>
-            <input id="practiceWpp" type="number" min="1" max="500" value="25" />
+            <label class="label" for="practiceLives">Lives</label>
+            <select id="practiceLives">
+              <option value="infinite">Infinite</option>
+              <option value="1">1 life</option>
+              <option value="2">2 lives</option>
+              <option value="3">3 lives</option>
+              <option value="4">4 lives</option>
+              <option value="5" selected>5 lives</option>
+              <option value="6">6 lives</option>
+              <option value="7">7 lives</option>
+              <option value="8">8 lives</option>
+              <option value="9">9 lives</option>
+              <option value="10">10 lives</option>
+            </select>
 
-            <label class="label" for="practiceTotalPrompts">Total rounds</label>
-            <input id="practiceTotalPrompts" type="number" min="1" max="500" value="20" />
+            <label class="label" for="practiceMinMatches">Minimum solves required for a prompt</label>
+            <input id="practiceMinMatches" type="number" min="1" max="50000" value="500" />
 
             <label class="label" for="practiceWordMode">Allowed word types</label>
             <select id="practiceWordMode">
@@ -956,18 +967,18 @@
 
             <div class="practice-buttons">
               <button class="action-btn primary" id="startPracticeBtn">Start Practice</button>
-              <button class="action-btn" id="generatePromptBtn">Next Prompt</button>
+              <button class="action-btn" id="generatePromptBtn">Skip Prompt</button>
               <button class="action-btn danger" id="resetPracticeBtn">Reset</button>
             </div>
 
             <div class="practice-stats">
               <div class="stat-box">
                 <small>Round</small>
-                <strong id="practiceRoundDisplay">0 / 20</strong>
+                <strong id="practiceRoundDisplay">0</strong>
               </div>
               <div class="stat-box">
-                <small>Allowed solves</small>
-                <strong id="practiceAllowedCount">0</strong>
+                <small>Lives</small>
+                <strong id="practiceLivesDisplay">∞</strong>
               </div>
               <div class="stat-box">
                 <small>Timer left</small>
@@ -1004,8 +1015,8 @@
                 <h3>Round details</h3>
                 <ul>
                   <li><strong>Matching words found:</strong> <span id="practiceMatchCount">0</span></li>
-                  <li><strong>Allowed solves this round:</strong> <span id="practiceSolveCount">0</span></li>
-                  <li><strong>Total target rounds:</strong> <span id="practiceTargetDisplay">20</span></li>
+                  <li><strong>Minimum solves required:</strong> <span id="practiceMinMatchesDisplay">500</span></li>
+                  <li><strong>Current mode:</strong> <span id="practiceModeDisplay">Casual / Neutral</span></li>
                 </ul>
               </div>
 
@@ -1018,7 +1029,7 @@
 
               <div class="progress-card">
                 <h3>Sample answers</h3>
-                <p id="practiceSampleWords" class="empty-state">Start practice or generate a prompt to preview matching words.</p>
+                <p id="practiceSampleWords" class="empty-state">Start practice to begin.</p>
               </div>
             </div>
           </div>
@@ -1034,24 +1045,13 @@
 
     <div class="log-entry">
       <div class="log-date">May 4, 2026</div>
-      <div class="log-version">v2.1</div>
+      <div class="log-version">v2.2</div>
       <ul>
-        <li>Added playable practice mode with answer input and submit checking.</li>
-        <li>Added countdown timer and round progression.</li>
-        <li>Added autofocus so the answer box is ready after prompts and correct answers.</li>
-        <li>Kept casual mode neutral and added apostrophe filtering.</li>
-        <li>Updated practice opponent to samsicle.</li>
-        <li>Added Discord line with ry0842.</li>
-      </ul>
-    </div>
-
-    <div class="log-entry">
-      <div class="log-date">Edit anytime</div>
-      <div class="log-version">How to update</div>
-      <ul>
-        <li>Change the date line.</li>
-        <li>Change the version line.</li>
-        <li>Add or remove bullet points for your changes.</li>
+        <li>Added lives selection, including infinite lives.</li>
+        <li>Changed practice prompts to use a minimum solves requirement instead of a maximum cap.</li>
+        <li>Set the default minimum solves requirement to 500 for easier prompts.</li>
+        <li>Made casual practice continue automatically after failed prompts.</li>
+        <li>Kept autofocus so the answer box stays ready while playing.</li>
       </ul>
     </div>
 
@@ -1065,17 +1065,27 @@
 
     const PRACTICE_OPPONENT_NAME = "samsicle";
 
+    // Hidden note for future log edits:
+    // - update .log-date
+    // - update .log-version
+    // - add/remove <li> entries only
+    // Nothing above is shown publicly on the page.
+
     const practiceState = {
       running: false,
       round: 0,
-      totalRounds: 20,
       timerSeconds: 8,
       timerLeft: 8,
       intervalId: null,
       currentPrompt: "",
       currentMatches: [],
-      allowedSolves: 0,
-      solvedWords: new Set()
+      solvedWords: new Set(),
+      livesMode: "5",
+      livesLeft: 5,
+      infiniteLives: false,
+      minMatches: 500,
+      currentWordMode: "casual",
+      currentMatchMode: "contains"
     };
 
     const screens = ["homeScreen", "finderScreen", "practiceScreen"];
@@ -1245,6 +1255,32 @@
       return [...prompts];
     }
 
+    function getLivesSetting() {
+      return document.getElementById("practiceLives").value;
+    }
+
+    function getFilteredMatchesForPrompt(prompt, wordMode, matchMode) {
+      return [...new Set(
+        applyPatternFilter(applyWordModeFilter(words, wordMode), prompt, matchMode)
+      )];
+    }
+
+    function getValidPromptPool(wordMode, matchMode, minMatches) {
+      const promptPool = getAllPromptCandidates(wordMode);
+      return promptPool.filter(prompt => {
+        const matches = getFilteredMatchesForPrompt(prompt, wordMode, matchMode);
+        return matches.length >= minMatches;
+      });
+    }
+
+    function getModeLabel(mode) {
+      if (mode === "long") return "Long Words Only";
+      if (mode === "hyphen") return "Hyphen Words Only";
+      if (mode === "apostrophe") return "Apostrophe Words Only";
+      if (mode === "plain") return "Plain Words Only";
+      return "Casual / Neutral";
+    }
+
     function focusPracticeInput() {
       const input = document.getElementById("practiceAnswerInput");
       if (input) {
@@ -1254,13 +1290,15 @@
 
     function updatePracticeUi() {
       document.getElementById("practiceOpponentName").textContent = PRACTICE_OPPONENT_NAME;
-      document.getElementById("practiceRoundDisplay").textContent = `${practiceState.round} / ${practiceState.totalRounds}`;
-      document.getElementById("practiceAllowedCount").textContent = String(practiceState.allowedSolves);
+      document.getElementById("practiceRoundDisplay").textContent = String(practiceState.round);
+      document.getElementById("practiceLivesDisplay").textContent = practiceState.infiniteLives
+        ? "∞"
+        : String(practiceState.livesLeft);
       document.getElementById("practiceTimerDisplay").textContent = `${practiceState.timerLeft}s`;
       document.getElementById("practiceSolvedDisplay").textContent = String(practiceState.solvedWords.size);
       document.getElementById("practiceMatchCount").textContent = String(practiceState.currentMatches.length);
-      document.getElementById("practiceSolveCount").textContent = String(practiceState.allowedSolves);
-      document.getElementById("practiceTargetDisplay").textContent = String(practiceState.totalRounds);
+      document.getElementById("practiceMinMatchesDisplay").textContent = String(practiceState.minMatches);
+      document.getElementById("practiceModeDisplay").textContent = getModeLabel(practiceState.currentWordMode);
 
       const widthPercent = practiceState.timerSeconds > 0
         ? Math.max(0, (practiceState.timerLeft / practiceState.timerSeconds) * 100)
@@ -1296,6 +1334,30 @@
       }
     }
 
+    function handlePracticeFailure() {
+      if (!practiceState.infiniteLives) {
+        practiceState.livesLeft -= 1;
+      }
+
+      if (!practiceState.infiniteLives && practiceState.livesLeft <= 0) {
+        practiceState.running = false;
+        stopPracticeTimer();
+        updatePracticeUi();
+        setPracticeMessage("Out of lives. Press Start Practice to play again.", "error");
+        return;
+      }
+
+      updatePracticeUi();
+
+      if (practiceState.currentWordMode === "casual") {
+        setPracticeMessage("Missed it. Loading a new prompt...", "error");
+        setTimeout(() => loadNextPrompt(false, true), 250);
+      } else {
+        practiceState.running = false;
+        setPracticeMessage("Bomb exploded. Press Skip Prompt to continue.", "error");
+      }
+    }
+
     function startTimer() {
       stopPracticeTimer();
       practiceState.timerLeft = practiceState.timerSeconds;
@@ -1307,8 +1369,7 @@
 
         if (practiceState.timerLeft <= 0) {
           stopPracticeTimer();
-          practiceState.running = false;
-          setPracticeMessage("Bomb exploded. Press Next Prompt to continue.", "error");
+          handlePracticeFailure();
         }
       }, 1000);
     }
@@ -1327,46 +1388,48 @@
         .join("");
     }
 
-    function loadNextPrompt(starting = false) {
+    function loadNextPrompt(starting = false, autoFromFail = false) {
       const wordMode = document.getElementById("practiceWordMode").value;
       const matchMode = document.getElementById("practiceMatchMode").value;
-      const maxWordsPerPrompt = Math.max(1, Math.min(500, Number(document.getElementById("practiceWpp").value) || 1));
+      const minMatches = Math.max(1, Number(document.getElementById("practiceMinMatches").value) || 500);
       const timer = Math.max(2, Math.min(60, Number(document.getElementById("practiceTimer").value) || 8));
-      const totalRounds = Math.max(1, Math.min(500, Number(document.getElementById("practiceTotalPrompts").value) || 20));
 
-      const promptPool = getAllPromptCandidates(wordMode);
-      const prompt = promptPool.length ? promptPool[Math.floor(Math.random() * promptPool.length)] : "";
+      const validPromptPool = getValidPromptPool(wordMode, matchMode, minMatches);
+      const prompt = validPromptPool.length
+        ? validPromptPool[Math.floor(Math.random() * validPromptPool.length)]
+        : "";
 
-      practiceState.totalRounds = totalRounds;
       practiceState.timerSeconds = timer;
-
-      if (!starting && practiceState.round >= totalRounds) {
-        practiceState.running = false;
-        stopPracticeTimer();
-        setPracticeMessage("Practice complete. Reset or start again.", "success");
-        return;
-      }
+      practiceState.minMatches = minMatches;
+      practiceState.currentWordMode = wordMode;
+      practiceState.currentMatchMode = matchMode;
 
       if (!prompt) {
         practiceState.running = false;
         stopPracticeTimer();
         document.getElementById("practicePrompt").textContent = "--";
         practiceState.currentMatches = [];
-        practiceState.allowedSolves = 0;
         practiceState.solvedWords = new Set();
         previewSampleWords();
         updatePracticeUi();
-        setPracticeMessage("No valid prompt could be generated with the current settings.", "error");
+        setPracticeMessage("No prompts matched the current minimum solves setting.", "error");
         return;
       }
 
-      let matches = applyPatternFilter(applyWordModeFilter(words, wordMode), prompt, matchMode);
-      matches = [...new Set(matches)];
+      const matches = getFilteredMatchesForPrompt(prompt, wordMode, matchMode);
 
-      practiceState.round = starting ? 1 : practiceState.round + 1;
+      if (starting) {
+        const livesSetting = getLivesSetting();
+        practiceState.livesMode = livesSetting;
+        practiceState.infiniteLives = livesSetting === "infinite";
+        practiceState.livesLeft = practiceState.infiniteLives ? Infinity : Number(livesSetting);
+        practiceState.round = 1;
+      } else {
+        practiceState.round += 1;
+      }
+
       practiceState.currentPrompt = prompt;
       practiceState.currentMatches = matches;
-      practiceState.allowedSolves = Math.min(maxWordsPerPrompt, matches.length);
       practiceState.solvedWords = new Set();
       practiceState.running = true;
 
@@ -1376,7 +1439,12 @@
       previewSampleWords();
       updatePracticeUi();
       startTimer();
-      setPracticeMessage("Round started. Type a valid answer and press Enter.", "info");
+      setPracticeMessage(
+        autoFromFail
+          ? "New prompt loaded. Keep going."
+          : "Round started. Type a valid answer and press Enter.",
+        "info"
+      );
       focusPracticeInput();
     }
 
@@ -1385,14 +1453,14 @@
         setPracticeMessage("Dictionary is not loaded yet.", "error");
         return;
       }
-      loadNextPrompt(true);
+      loadNextPrompt(true, false);
     }
 
     function submitPracticeAnswer(event) {
       event.preventDefault();
 
       if (!practiceState.currentPrompt || !practiceState.running) {
-        setPracticeMessage("Start practice first or generate the next prompt.", "error");
+        setPracticeMessage("Start practice first or load a prompt.", "error");
         return;
       }
 
@@ -1429,25 +1497,11 @@
         return;
       }
 
-      if (practiceState.solvedWords.size >= practiceState.allowedSolves) {
-        setPracticeMessage("You already reached the max solves for this round.", "error");
-        focusPracticeInput();
-        return;
-      }
-
       practiceState.solvedWords.add(answer);
       input.value = "";
       updatePracticeUi();
       focusPracticeInput();
-
-      if (practiceState.solvedWords.size >= practiceState.allowedSolves) {
-        practiceState.running = false;
-        stopPracticeTimer();
-        setPracticeMessage("Round complete. Press Next Prompt for another one.", "success");
-      } else {
-        const remaining = practiceState.allowedSolves - practiceState.solvedWords.size;
-        setPracticeMessage(`Accepted. ${remaining} solve${remaining === 1 ? "" : "s"} left this round.`, "success");
-      }
+      setPracticeMessage("Accepted.", "success");
     }
 
     function resetPractice() {
@@ -1455,22 +1509,26 @@
 
       practiceState.running = false;
       practiceState.round = 0;
-      practiceState.totalRounds = 20;
       practiceState.timerSeconds = 8;
       practiceState.timerLeft = 8;
       practiceState.currentPrompt = "";
       practiceState.currentMatches = [];
-      practiceState.allowedSolves = 0;
       practiceState.solvedWords = new Set();
+      practiceState.livesMode = "5";
+      practiceState.livesLeft = 5;
+      practiceState.infiniteLives = false;
+      practiceState.minMatches = 500;
+      practiceState.currentWordMode = "casual";
+      practiceState.currentMatchMode = "contains";
 
       document.getElementById("practiceTimer").value = "8";
-      document.getElementById("practiceWpp").value = "25";
-      document.getElementById("practiceTotalPrompts").value = "20";
+      document.getElementById("practiceLives").value = "5";
+      document.getElementById("practiceMinMatches").value = "500";
       document.getElementById("practiceWordMode").value = "casual";
       document.getElementById("practiceMatchMode").value = "contains";
       document.getElementById("practicePrompt").textContent = "--";
       document.getElementById("practiceAnswerInput").value = "";
-      document.getElementById("practiceSampleWords").textContent = "Start practice or generate a prompt to preview matching words.";
+      document.getElementById("practiceSampleWords").textContent = "Start practice to begin.";
 
       updatePracticeUi();
       setPracticeMessage("Practice reset. Press Start Practice to begin.", "info");
@@ -1496,7 +1554,7 @@
     document.getElementById("clearFinderBtn").addEventListener("click", clearFinder);
 
     document.getElementById("startPracticeBtn").addEventListener("click", startPractice);
-    document.getElementById("generatePromptBtn").addEventListener("click", () => loadNextPrompt(false));
+    document.getElementById("generatePromptBtn").addEventListener("click", () => loadNextPrompt(false, false));
     document.getElementById("resetPracticeBtn").addEventListener("click", resetPractice);
     document.getElementById("practiceForm").addEventListener("submit", submitPracticeAnswer);
 
