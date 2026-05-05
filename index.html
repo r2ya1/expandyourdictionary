@@ -18,6 +18,7 @@
       --accent-2: #60d84a;
       --danger: #ff6666;
       --warning: #ffd84d;
+      --success: #78f39f;
       --border: rgba(255, 255, 255, 0.1);
       --shadow: 0 22px 50px rgba(0, 0, 0, 0.35);
       --radius-xl: 24px;
@@ -39,6 +40,7 @@
       --accent-2: #35a826;
       --danger: #e45555;
       --warning: #e2b800;
+      --success: #159f53;
       --border: rgba(15, 25, 45, 0.12);
       --shadow: 0 18px 42px rgba(44, 66, 120, 0.16);
     }
@@ -56,6 +58,7 @@
       --accent-2: #69c95c;
       --danger: #ff7676;
       --warning: #ffd84d;
+      --success: #78f39f;
       --border: rgba(255, 255, 255, 0.08);
       --shadow: 0 20px 48px rgba(0, 0, 0, 0.45);
     }
@@ -92,7 +95,7 @@
     }
 
     .app-shell {
-      max-width: 1180px;
+      max-width: 1220px;
       margin: 0 auto;
     }
 
@@ -132,7 +135,6 @@
     .hero-panel,
     .finder-layout,
     .practice-layout,
-    .modal-card,
     .log-panel {
       background: var(--panel);
       border: 1px solid var(--border);
@@ -160,7 +162,7 @@
 
     .hero-grid {
       display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
+      grid-template-columns: 1.15fr 0.85fr;
       gap: 20px;
       align-items: stretch;
     }
@@ -232,10 +234,18 @@
       gap: 12px;
     }
 
-    .mini-card {
+    .mini-card,
+    .panel-card,
+    .result-card,
+    .progress-card,
+    .player-card,
+    .stat-box {
       background: var(--panel-2);
       border: 1px solid var(--border);
       border-radius: 18px;
+    }
+
+    .mini-card {
       padding: 16px;
     }
 
@@ -286,9 +296,6 @@
     }
 
     .panel-card {
-      background: var(--panel-2);
-      border: 1px solid var(--border);
-      border-radius: 18px;
       padding: 16px;
       min-width: 0;
     }
@@ -337,6 +344,21 @@
       padding-right: 42px;
     }
 
+    select option {
+      background: #1b2238;
+      color: #f2f5ff;
+    }
+
+    body.light select option {
+      background: #ffffff;
+      color: #11192b;
+    }
+
+    body.dark select option {
+      background: #111111;
+      color: #f4f4f4;
+    }
+
     input::placeholder {
       color: var(--muted);
     }
@@ -357,9 +379,6 @@
     }
 
     .stat-box {
-      background: var(--soft);
-      border: 1px solid var(--border);
-      border-radius: 14px;
       padding: 12px;
     }
 
@@ -383,11 +402,8 @@
     }
 
     .result-card {
-      background: var(--soft);
-      border: 1px solid var(--border);
-      border-radius: 16px;
       padding: 14px;
-      min-height: 190px;
+      min-height: 210px;
     }
 
     .result-card h3 {
@@ -413,7 +429,8 @@
       padding: 0 2px;
     }
 
-    .empty-state {
+    .empty-state,
+    .muted-text {
       color: var(--muted);
       font-size: 14px;
       line-height: 1.6;
@@ -428,9 +445,6 @@
     }
 
     .player-card {
-      background: var(--soft);
-      border: 1px solid var(--border);
-      border-radius: 16px;
       padding: 12px;
       min-height: 84px;
     }
@@ -485,6 +499,23 @@
       min-height: 52px;
     }
 
+    .timer-bar-wrap {
+      width: 100%;
+      height: 12px;
+      background: var(--soft);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      margin: 12px 0 14px;
+    }
+
+    .timer-bar {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, var(--accent), #d8ff7d);
+      transition: width 1s linear;
+    }
+
     .practice-buttons,
     .utility-row {
       display: flex;
@@ -509,15 +540,18 @@
       border: none;
     }
 
+    .action-btn.danger {
+      background: linear-gradient(180deg, #ff8b8b, #ff5c5c);
+      color: white;
+      border: none;
+    }
+
     .progress-list {
       display: grid;
       gap: 12px;
     }
 
     .progress-card {
-      background: var(--soft);
-      border: 1px solid var(--border);
-      border-radius: 16px;
       padding: 14px;
     }
 
@@ -536,6 +570,39 @@
     .progress-card ul {
       margin: 0;
       padding-left: 18px;
+    }
+
+    .answer-form {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .message-box {
+      margin-top: 12px;
+      min-height: 24px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .message-box.success {
+      color: var(--success);
+    }
+
+    .message-box.error {
+      color: #ff9a9a;
+    }
+
+    .message-box.info {
+      color: var(--muted);
+    }
+
+    .solved-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
     }
 
     .footer {
@@ -564,6 +631,13 @@
       height: 18px;
       fill: currentColor;
       flex: 0 0 auto;
+    }
+
+    .native-note {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
     }
 
     .log-toggle {
@@ -690,6 +764,10 @@
       .prompt-value {
         font-size: 34px;
       }
+
+      .answer-form {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -714,13 +792,13 @@
           <div class="hero-copy">
             <h2>Train faster. Search cleaner. Practice smarter.</h2>
             <p>
-              Use the word finder to explore matches, then jump into a separate practice mode with custom timer settings,
-              prompt limits, and a fake opponent to simulate game pressure.
+              Use the word finder to explore matches, then jump into a separate practice mode with a prompt generator,
+              live timer, answer checking, and round progression.
             </p>
 
             <div class="hero-badges">
               <span class="badge">Word finder</span>
-              <span class="badge">Custom practice mode</span>
+              <span class="badge">Playable practice mode</span>
               <span class="badge">Hyphen + apostrophe support</span>
               <span class="badge">Update log built in</span>
             </div>
@@ -736,16 +814,16 @@
               <h3>What’s fixed</h3>
               <ul>
                 <li>Casual mode is now neutral and does not hide long or special words.</li>
-                <li>Dropdowns use custom styling instead of the default bright browser look.</li>
-                <li>Word categories now include apostrophe words too.</li>
+                <li>Apostrophe words now have their own support.</li>
+                <li>Practice mode is now actually playable instead of just previewing answers.</li>
               </ul>
             </div>
 
             <div class="mini-card">
-              <h4>Practice mode</h4>
+              <h4>Practice opponent</h4>
               <p>
-                Separate screen, fake opponent named <strong>samsicle</strong>, editable timer,
-                prompt caps, and a prompt generator designed for repeated solving.
+                Your practice opponent is set to <strong>samsicle</strong>.
+                You can change that later in the code by editing the opponent constant.
               </p>
             </div>
           </div>
@@ -781,6 +859,11 @@
               <option value="apostrophe">Apostrophe Words Only</option>
               <option value="plain">Plain Words Only</option>
             </select>
+
+            <div class="native-note">
+              If the opened dropdown list still looks white on your browser, that is a native browser menu limitation.
+              The closed select styling is controlled here, but the popup list itself may still use system colors.
+            </div>
 
             <div class="finder-stats">
               <div class="stat-box">
@@ -853,7 +936,7 @@
             <label class="label" for="practiceWpp">Max words per prompt</label>
             <input id="practiceWpp" type="number" min="1" max="500" value="25" />
 
-            <label class="label" for="practiceTotalPrompts">Total solves / prompts</label>
+            <label class="label" for="practiceTotalPrompts">Total rounds</label>
             <input id="practiceTotalPrompts" type="number" min="1" max="500" value="20" />
 
             <label class="label" for="practiceWordMode">Allowed word types</label>
@@ -872,26 +955,27 @@
             </select>
 
             <div class="practice-buttons">
-              <button class="action-btn primary" id="generatePromptBtn">Generate Prompt</button>
-              <button class="action-btn" id="resetPracticeBtn">Reset Practice</button>
+              <button class="action-btn primary" id="startPracticeBtn">Start Practice</button>
+              <button class="action-btn" id="generatePromptBtn">Next Prompt</button>
+              <button class="action-btn danger" id="resetPracticeBtn">Reset</button>
             </div>
 
             <div class="practice-stats">
               <div class="stat-box">
-                <small>Prompt</small>
-                <strong id="practicePromptCount">0</strong>
+                <small>Round</small>
+                <strong id="practiceRoundDisplay">0 / 20</strong>
               </div>
               <div class="stat-box">
                 <small>Allowed solves</small>
                 <strong id="practiceAllowedCount">0</strong>
               </div>
               <div class="stat-box">
-                <small>Timer</small>
+                <small>Timer left</small>
                 <strong id="practiceTimerDisplay">8s</strong>
               </div>
               <div class="stat-box">
-                <small>Total target</small>
-                <strong id="practiceTargetDisplay">20</strong>
+                <small>Solved this round</small>
+                <strong id="practiceSolvedDisplay">0</strong>
               </div>
             </div>
           </div>
@@ -904,28 +988,37 @@
               <div class="prompt-value" id="practicePrompt">--</div>
             </div>
 
-            <div class="progress-list">
-              <div class="progress-card">
-                <h3>How it works</h3>
-                <p>
-                  Generate a prompt and the site checks how many valid words exist for that prompt
-                  using your current settings. If only one valid answer exists, like a rare prompt case,
-                  the allowed solve count drops to 1 automatically instead of pretending there are more.
-                </p>
-              </div>
+            <div class="timer-bar-wrap">
+              <div class="timer-bar" id="timerBar"></div>
+            </div>
 
+            <form class="answer-form" id="practiceForm">
+              <input id="practiceAnswerInput" type="text" placeholder="Type a valid answer here..." autocomplete="off" />
+              <button type="submit" class="action-btn primary">Submit</button>
+            </form>
+
+            <div id="practiceMessage" class="message-box info">Press Start Practice to begin.</div>
+
+            <div class="progress-list" style="margin-top: 12px;">
               <div class="progress-card">
-                <h3>Prompt details</h3>
+                <h3>Round details</h3>
                 <ul>
                   <li><strong>Matching words found:</strong> <span id="practiceMatchCount">0</span></li>
                   <li><strong>Allowed solves this round:</strong> <span id="practiceSolveCount">0</span></li>
-                  <li><strong>Suggested timer:</strong> <span id="practiceRoundTimer">8s</span></li>
+                  <li><strong>Total target rounds:</strong> <span id="practiceTargetDisplay">20</span></li>
                 </ul>
               </div>
 
               <div class="progress-card">
+                <h3>Solved answers</h3>
+                <div id="solvedWordsList" class="solved-list">
+                  <span class="muted-text">No answers submitted yet.</span>
+                </div>
+              </div>
+
+              <div class="progress-card">
                 <h3>Sample answers</h3>
-                <p id="practiceSampleWords" class="empty-state">Generate a prompt to preview matching words.</p>
+                <p id="practiceSampleWords" class="empty-state">Start practice or generate a prompt to preview matching words.</p>
               </div>
             </div>
           </div>
@@ -941,15 +1034,14 @@
 
     <div class="log-entry">
       <div class="log-date">May 4, 2026</div>
-      <div class="log-version">v2.0</div>
+      <div class="log-version">v2.1</div>
       <ul>
-        <li>Rebuilt the site into one-file multi-screen layout.</li>
-        <li>Added separate Word Finder and Practice Mode screens.</li>
-        <li>Fixed casual mode so it acts as neutral instead of hiding long or special words.</li>
-        <li>Added apostrophe word filtering.</li>
+        <li>Added playable practice mode with answer input and submit checking.</li>
+        <li>Added countdown timer and round progression.</li>
+        <li>Added autofocus so the answer box is ready after prompts and correct answers.</li>
+        <li>Kept casual mode neutral and added apostrophe filtering.</li>
         <li>Updated practice opponent to samsicle.</li>
-        <li>Added Discord tag display: ry0842.</li>
-        <li>Improved dropdown styling and overall polish.</li>
+        <li>Added Discord line with ry0842.</li>
       </ul>
     </div>
 
@@ -970,7 +1062,21 @@
     let words = [];
     let lastFinderPattern = "";
     let lastFinderMatches = [];
+
     const PRACTICE_OPPONENT_NAME = "samsicle";
+
+    const practiceState = {
+      running: false,
+      round: 0,
+      totalRounds: 20,
+      timerSeconds: 8,
+      timerLeft: 8,
+      intervalId: null,
+      currentPrompt: "",
+      currentMatches: [],
+      allowedSolves: 0,
+      solvedWords: new Set()
+    };
 
     const screens = ["homeScreen", "finderScreen", "practiceScreen"];
 
@@ -1056,37 +1162,38 @@
       const longest = [...matches].sort((a, b) => b.length - a.length).slice(0, 4);
       const shortest = [...matches].sort((a, b) => a.length - b.length).slice(0, 4);
       const random = shuffleArray(matches).slice(0, 4);
-      const hyphenated = matches.filter(word => word.includes("-")).slice(0, 4);
       const apostrophes = matches.filter(word => word.includes("'")).slice(0, 4);
+
+      const mode = document.getElementById("finderWordMode").value;
+
+      if (!matches.length) {
+        results.appendChild(buildResultCard("Longest", [], lastFinderPattern));
+        results.appendChild(buildResultCard("Shortest", [], lastFinderPattern));
+        results.appendChild(buildResultCard("Random", [], lastFinderPattern));
+        results.appendChild(buildResultCard("Apostrophes", [], lastFinderPattern));
+        return;
+      }
+
+      if (mode === "hyphen") {
+        results.appendChild(buildResultCard("Hyphenated", random, lastFinderPattern));
+        results.appendChild(buildResultCard("Shortest", [], lastFinderPattern));
+        results.appendChild(buildResultCard("Random", [], lastFinderPattern));
+        results.appendChild(buildResultCard("Apostrophes", [], lastFinderPattern));
+        return;
+      }
+
+      if (mode === "apostrophe") {
+        results.appendChild(buildResultCard("Apostrophes", random, lastFinderPattern));
+        results.appendChild(buildResultCard("Longest", [], lastFinderPattern));
+        results.appendChild(buildResultCard("Shortest", [], lastFinderPattern));
+        results.appendChild(buildResultCard("Random", [], lastFinderPattern));
+        return;
+      }
 
       results.appendChild(buildResultCard("Longest", longest, lastFinderPattern));
       results.appendChild(buildResultCard("Shortest", shortest, lastFinderPattern));
       results.appendChild(buildResultCard("Random", random, lastFinderPattern));
       results.appendChild(buildResultCard("Apostrophes", apostrophes, lastFinderPattern));
-
-      if (document.getElementById("finderWordMode").value === "hyphen") {
-        results.innerHTML = "";
-        results.appendChild(buildResultCard("Hyphenated", random, lastFinderPattern));
-        results.appendChild(buildResultCard("Shortest", [], lastFinderPattern));
-        results.appendChild(buildResultCard("Random", [], lastFinderPattern));
-        results.appendChild(buildResultCard("Apostrophes", [], lastFinderPattern));
-      }
-
-      if (document.getElementById("finderWordMode").value === "apostrophe") {
-        results.innerHTML = "";
-        results.appendChild(buildResultCard("Apostrophes", random, lastFinderPattern));
-        results.appendChild(buildResultCard("Longest", [], lastFinderPattern));
-        results.appendChild(buildResultCard("Shortest", [], lastFinderPattern));
-        results.appendChild(buildResultCard("Random", [], lastFinderPattern));
-      }
-
-      if (!matches.length) {
-        results.innerHTML = "";
-        results.appendChild(buildResultCard("Longest", [], lastFinderPattern));
-        results.appendChild(buildResultCard("Shortest", [], lastFinderPattern));
-        results.appendChild(buildResultCard("Random", [], lastFinderPattern));
-        results.appendChild(buildResultCard("Apostrophes", [], lastFinderPattern));
-      }
     }
 
     function runFinderSearch() {
@@ -1138,67 +1245,235 @@
       return [...prompts];
     }
 
-    function generatePracticePrompt() {
+    function focusPracticeInput() {
+      const input = document.getElementById("practiceAnswerInput");
+      if (input) {
+        requestAnimationFrame(() => input.focus());
+      }
+    }
+
+    function updatePracticeUi() {
+      document.getElementById("practiceOpponentName").textContent = PRACTICE_OPPONENT_NAME;
+      document.getElementById("practiceRoundDisplay").textContent = `${practiceState.round} / ${practiceState.totalRounds}`;
+      document.getElementById("practiceAllowedCount").textContent = String(practiceState.allowedSolves);
+      document.getElementById("practiceTimerDisplay").textContent = `${practiceState.timerLeft}s`;
+      document.getElementById("practiceSolvedDisplay").textContent = String(practiceState.solvedWords.size);
+      document.getElementById("practiceMatchCount").textContent = String(practiceState.currentMatches.length);
+      document.getElementById("practiceSolveCount").textContent = String(practiceState.allowedSolves);
+      document.getElementById("practiceTargetDisplay").textContent = String(practiceState.totalRounds);
+
+      const widthPercent = practiceState.timerSeconds > 0
+        ? Math.max(0, (practiceState.timerLeft / practiceState.timerSeconds) * 100)
+        : 0;
+      document.getElementById("timerBar").style.width = `${widthPercent}%`;
+
+      const solvedWordsList = document.getElementById("solvedWordsList");
+      solvedWordsList.innerHTML = "";
+      const solved = [...practiceState.solvedWords];
+
+      if (!solved.length) {
+        solvedWordsList.innerHTML = '<span class="muted-text">No answers submitted yet.</span>';
+      } else {
+        solved.forEach(word => {
+          const chip = document.createElement("span");
+          chip.className = "word-chip";
+          chip.textContent = word;
+          solvedWordsList.appendChild(chip);
+        });
+      }
+    }
+
+    function setPracticeMessage(text, type = "info") {
+      const box = document.getElementById("practiceMessage");
+      box.className = `message-box ${type}`;
+      box.textContent = text;
+    }
+
+    function stopPracticeTimer() {
+      if (practiceState.intervalId) {
+        clearInterval(practiceState.intervalId);
+        practiceState.intervalId = null;
+      }
+    }
+
+    function startTimer() {
+      stopPracticeTimer();
+      practiceState.timerLeft = practiceState.timerSeconds;
+      updatePracticeUi();
+
+      practiceState.intervalId = setInterval(() => {
+        practiceState.timerLeft -= 1;
+        updatePracticeUi();
+
+        if (practiceState.timerLeft <= 0) {
+          stopPracticeTimer();
+          practiceState.running = false;
+          setPracticeMessage("Bomb exploded. Press Next Prompt to continue.", "error");
+        }
+      }, 1000);
+    }
+
+    function previewSampleWords() {
+      const sampleWords = practiceState.currentMatches.slice(0, 12);
+      const sampleEl = document.getElementById("practiceSampleWords");
+
+      if (!sampleWords.length) {
+        sampleEl.textContent = "No matching words found for this prompt.";
+        return;
+      }
+
+      sampleEl.innerHTML = sampleWords
+        .map(word => `<span class="word-chip">${word}</span>`)
+        .join("");
+    }
+
+    function loadNextPrompt(starting = false) {
       const wordMode = document.getElementById("practiceWordMode").value;
       const matchMode = document.getElementById("practiceMatchMode").value;
       const maxWordsPerPrompt = Math.max(1, Math.min(500, Number(document.getElementById("practiceWpp").value) || 1));
       const timer = Math.max(2, Math.min(60, Number(document.getElementById("practiceTimer").value) || 8));
-      const totalPrompts = Math.max(1, Math.min(500, Number(document.getElementById("practiceTotalPrompts").value) || 20));
+      const totalRounds = Math.max(1, Math.min(500, Number(document.getElementById("practiceTotalPrompts").value) || 20));
 
       const promptPool = getAllPromptCandidates(wordMode);
       const prompt = promptPool.length ? promptPool[Math.floor(Math.random() * promptPool.length)] : "";
 
-      document.getElementById("practiceOpponentName").textContent = PRACTICE_OPPONENT_NAME;
-      document.getElementById("practiceTimerDisplay").textContent = `${timer}s`;
-      document.getElementById("practiceRoundTimer").textContent = `${timer}s`;
-      document.getElementById("practiceTargetDisplay").textContent = String(totalPrompts);
+      practiceState.totalRounds = totalRounds;
+      practiceState.timerSeconds = timer;
+
+      if (!starting && practiceState.round >= totalRounds) {
+        practiceState.running = false;
+        stopPracticeTimer();
+        setPracticeMessage("Practice complete. Reset or start again.", "success");
+        return;
+      }
 
       if (!prompt) {
+        practiceState.running = false;
+        stopPracticeTimer();
         document.getElementById("practicePrompt").textContent = "--";
-        document.getElementById("practicePromptCount").textContent = "0";
-        document.getElementById("practiceAllowedCount").textContent = "0";
-        document.getElementById("practiceMatchCount").textContent = "0";
-        document.getElementById("practiceSolveCount").textContent = "0";
-        document.getElementById("practiceSampleWords").textContent = "No valid prompt could be generated with the current settings.";
+        practiceState.currentMatches = [];
+        practiceState.allowedSolves = 0;
+        practiceState.solvedWords = new Set();
+        previewSampleWords();
+        updatePracticeUi();
+        setPracticeMessage("No valid prompt could be generated with the current settings.", "error");
         return;
       }
 
       let matches = applyPatternFilter(applyWordModeFilter(words, wordMode), prompt, matchMode);
       matches = [...new Set(matches)];
 
-      const allowedSolves = Math.min(maxWordsPerPrompt, matches.length);
-      const sampleWords = matches.slice(0, 12);
+      practiceState.round = starting ? 1 : practiceState.round + 1;
+      practiceState.currentPrompt = prompt;
+      practiceState.currentMatches = matches;
+      practiceState.allowedSolves = Math.min(maxWordsPerPrompt, matches.length);
+      practiceState.solvedWords = new Set();
+      practiceState.running = true;
 
       document.getElementById("practicePrompt").textContent = prompt.toUpperCase();
-      document.getElementById("practicePromptCount").textContent = String(promptPool.length);
-      document.getElementById("practiceAllowedCount").textContent = String(allowedSolves);
-      document.getElementById("practiceMatchCount").textContent = String(matches.length);
-      document.getElementById("practiceSolveCount").textContent = String(allowedSolves);
+      document.getElementById("practiceAnswerInput").value = "";
 
-      if (!sampleWords.length) {
-        document.getElementById("practiceSampleWords").textContent = "No matching words found for this prompt.";
+      previewSampleWords();
+      updatePracticeUi();
+      startTimer();
+      setPracticeMessage("Round started. Type a valid answer and press Enter.", "info");
+      focusPracticeInput();
+    }
+
+    function startPractice() {
+      if (!words.length) {
+        setPracticeMessage("Dictionary is not loaded yet.", "error");
+        return;
+      }
+      loadNextPrompt(true);
+    }
+
+    function submitPracticeAnswer(event) {
+      event.preventDefault();
+
+      if (!practiceState.currentPrompt || !practiceState.running) {
+        setPracticeMessage("Start practice first or generate the next prompt.", "error");
+        return;
+      }
+
+      const input = document.getElementById("practiceAnswerInput");
+      const answer = input.value.toLowerCase().trim();
+
+      if (!answer) {
+        setPracticeMessage("Type a word first.", "error");
+        focusPracticeInput();
+        return;
+      }
+
+      if (!answer.includes(practiceState.currentPrompt) && document.getElementById("practiceMatchMode").value === "contains") {
+        setPracticeMessage("That word does not contain the current prompt.", "error");
+        focusPracticeInput();
+        return;
+      }
+
+      if (document.getElementById("practiceMatchMode").value === "starts" && !answer.startsWith(practiceState.currentPrompt)) {
+        setPracticeMessage("That word does not start with the current prompt.", "error");
+        focusPracticeInput();
+        return;
+      }
+
+      if (!practiceState.currentMatches.includes(answer)) {
+        setPracticeMessage("That word is not allowed for this prompt.", "error");
+        focusPracticeInput();
+        return;
+      }
+
+      if (practiceState.solvedWords.has(answer)) {
+        setPracticeMessage("You already used that word this round.", "error");
+        focusPracticeInput();
+        return;
+      }
+
+      if (practiceState.solvedWords.size >= practiceState.allowedSolves) {
+        setPracticeMessage("You already reached the max solves for this round.", "error");
+        focusPracticeInput();
+        return;
+      }
+
+      practiceState.solvedWords.add(answer);
+      input.value = "";
+      updatePracticeUi();
+      focusPracticeInput();
+
+      if (practiceState.solvedWords.size >= practiceState.allowedSolves) {
+        practiceState.running = false;
+        stopPracticeTimer();
+        setPracticeMessage("Round complete. Press Next Prompt for another one.", "success");
       } else {
-        document.getElementById("practiceSampleWords").innerHTML = sampleWords
-          .map(word => `<span class="word-chip">${word}</span>`)
-          .join("");
+        const remaining = practiceState.allowedSolves - practiceState.solvedWords.size;
+        setPracticeMessage(`Accepted. ${remaining} solve${remaining === 1 ? "" : "s"} left this round.`, "success");
       }
     }
 
     function resetPractice() {
+      stopPracticeTimer();
+
+      practiceState.running = false;
+      practiceState.round = 0;
+      practiceState.totalRounds = 20;
+      practiceState.timerSeconds = 8;
+      practiceState.timerLeft = 8;
+      practiceState.currentPrompt = "";
+      practiceState.currentMatches = [];
+      practiceState.allowedSolves = 0;
+      practiceState.solvedWords = new Set();
+
       document.getElementById("practiceTimer").value = "8";
       document.getElementById("practiceWpp").value = "25";
       document.getElementById("practiceTotalPrompts").value = "20";
       document.getElementById("practiceWordMode").value = "casual";
       document.getElementById("practiceMatchMode").value = "contains";
       document.getElementById("practicePrompt").textContent = "--";
-      document.getElementById("practicePromptCount").textContent = "0";
-      document.getElementById("practiceAllowedCount").textContent = "0";
-      document.getElementById("practiceMatchCount").textContent = "0";
-      document.getElementById("practiceSolveCount").textContent = "0";
-      document.getElementById("practiceTimerDisplay").textContent = "8s";
-      document.getElementById("practiceRoundTimer").textContent = "8s";
-      document.getElementById("practiceTargetDisplay").textContent = "20";
-      document.getElementById("practiceSampleWords").textContent = "Generate a prompt to preview matching words.";
+      document.getElementById("practiceAnswerInput").value = "";
+      document.getElementById("practiceSampleWords").textContent = "Start practice or generate a prompt to preview matching words.";
+
+      updatePracticeUi();
+      setPracticeMessage("Practice reset. Press Start Practice to begin.", "info");
     }
 
     document.getElementById("themeMode").addEventListener("change", e => {
@@ -1220,8 +1495,10 @@
     });
     document.getElementById("clearFinderBtn").addEventListener("click", clearFinder);
 
-    document.getElementById("generatePromptBtn").addEventListener("click", generatePracticePrompt);
+    document.getElementById("startPracticeBtn").addEventListener("click", startPractice);
+    document.getElementById("generatePromptBtn").addEventListener("click", () => loadNextPrompt(false));
     document.getElementById("resetPracticeBtn").addEventListener("click", resetPractice);
+    document.getElementById("practiceForm").addEventListener("submit", submitPracticeAnswer);
 
     document.addEventListener("keydown", event => {
       if (event.code === "ControlLeft" && document.getElementById("finderScreen").classList.contains("active")) {
@@ -1264,6 +1541,7 @@
           "Failed to load dictionary. Check assets.json and the fetch/decode format.";
         document.getElementById("practiceSampleWords").textContent =
           "Dictionary failed to load, so practice prompts cannot be generated.";
+        setPracticeMessage("Dictionary failed to load.", "error");
       });
   </script>
 </body>
