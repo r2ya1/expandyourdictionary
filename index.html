@@ -6,48 +6,58 @@
   <title>Word Bomb Learner</title>
   <style>
     :root {
-      --bg-main: linear-gradient(180deg, #1d2442 0%, #101522 100%);
-      --bg-panel: rgba(17, 22, 35, 0.92);
-      --bg-panel-2: rgba(26, 32, 49, 0.95);
-      --bg-box: rgba(255, 255, 255, 0.08);
-      --text-main: #f3f5ff;
-      --text-muted: #b5bfdc;
-      --accent: #77e36a;
-      --accent-2: #94f089;
-      --danger: #ff6b6b;
-      --border: rgba(255, 255, 255, 0.12);
-      --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
-      --highlight: #ffe44d;
+      --bg-1: #0d1324;
+      --bg-2: #151d34;
+      --panel: rgba(18, 24, 41, 0.92);
+      --panel-2: rgba(25, 32, 54, 0.94);
+      --soft: rgba(255, 255, 255, 0.06);
+      --soft-2: rgba(255, 255, 255, 0.09);
+      --text: #f2f5ff;
+      --muted: #aeb7d5;
+      --accent: #86ef6c;
+      --accent-2: #60d84a;
+      --danger: #ff6666;
+      --warning: #ffd84d;
+      --border: rgba(255, 255, 255, 0.1);
+      --shadow: 0 22px 50px rgba(0, 0, 0, 0.35);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
     }
 
     body.light {
-      --bg-main: linear-gradient(180deg, #f4f7ff 0%, #dfe8ff 100%);
-      --bg-panel: rgba(255, 255, 255, 0.95);
-      --bg-panel-2: rgba(244, 247, 255, 0.98);
-      --bg-box: rgba(40, 60, 120, 0.08);
-      --text-main: #121826;
-      --text-muted: #5f6983;
-      --accent: #3fb950;
-      --accent-2: #2f9b42;
-      --danger: #e25555;
-      --border: rgba(10, 20, 40, 0.12);
-      --shadow: 0 18px 40px rgba(40, 60, 120, 0.14);
-      --highlight: #ffe44d;
+      --bg-1: #edf3ff;
+      --bg-2: #dce6ff;
+      --panel: rgba(255, 255, 255, 0.94);
+      --panel-2: rgba(247, 250, 255, 0.96);
+      --soft: rgba(30, 50, 90, 0.06);
+      --soft-2: rgba(30, 50, 90, 0.1);
+      --text: #11192b;
+      --muted: #5f6d8f;
+      --accent: #4ec73b;
+      --accent-2: #35a826;
+      --danger: #e45555;
+      --warning: #e2b800;
+      --border: rgba(15, 25, 45, 0.12);
+      --shadow: 0 18px 42px rgba(44, 66, 120, 0.16);
     }
 
     body.dark {
-      --bg-main: linear-gradient(180deg, #05070d 0%, #0b0f17 100%);
-      --bg-panel: rgba(14, 14, 14, 0.95);
-      --bg-panel-2: rgba(20, 20, 20, 0.98);
-      --bg-box: rgba(255, 255, 255, 0.05);
-      --text-main: #f0f0f0;
-      --text-muted: #aaaaaa;
-      --accent: #7adf7a;
-      --accent-2: #98ef98;
-      --danger: #ff7777;
+      --bg-1: #04060c;
+      --bg-2: #0b0f18;
+      --panel: rgba(14, 14, 16, 0.95);
+      --panel-2: rgba(19, 19, 23, 0.97);
+      --soft: rgba(255, 255, 255, 0.04);
+      --soft-2: rgba(255, 255, 255, 0.08);
+      --text: #f4f4f4;
+      --muted: #ababab;
+      --accent: #7fe46f;
+      --accent-2: #69c95c;
+      --danger: #ff7676;
+      --warning: #ffd84d;
       --border: rgba(255, 255, 255, 0.08);
-      --shadow: 0 18px 45px rgba(0, 0, 0, 0.5);
-      --highlight: #ffe44d;
+      --shadow: 0 20px 48px rgba(0, 0, 0, 0.45);
     }
 
     * {
@@ -57,17 +67,32 @@
     html, body {
       margin: 0;
       min-height: 100%;
-      font-family: Arial, sans-serif;
-      background: var(--bg-main);
-      color: var(--text-main);
+      font-family: Inter, Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(110, 140, 255, 0.12), transparent 35%),
+        linear-gradient(180deg, var(--bg-2) 0%, var(--bg-1) 100%);
     }
 
     body {
       padding: 24px;
     }
 
-    .page {
-      max-width: 1100px;
+    button, input, select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .app-shell {
+      max-width: 1180px;
       margin: 0 auto;
     }
 
@@ -80,204 +105,437 @@
       flex-wrap: wrap;
     }
 
-    .brand {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+    .brand-wrap h1 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.05;
     }
 
-    .brand h1 {
-      margin: 0;
-      font-size: 30px;
-      letter-spacing: 0.3px;
-    }
-
-    .brand p {
-      margin: 0;
-      color: var(--text-muted);
+    .brand-wrap p {
+      margin: 6px 0 0;
+      color: var(--muted);
       font-size: 14px;
     }
 
-    .theme-select {
-      width: 180px;
+    .theme-picker {
+      width: 190px;
     }
 
-    .layout {
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .hero-panel,
+    .finder-layout,
+    .practice-layout,
+    .modal-card,
+    .log-panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius-xl);
+      backdrop-filter: blur(8px);
+    }
+
+    .hero-panel {
+      padding: 28px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-panel::before {
+      content: "";
+      position: absolute;
+      inset: auto -80px -110px auto;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(134, 239, 108, 0.22), transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    .hero-copy h2 {
+      margin: 0 0 10px;
+      font-size: 40px;
+      line-height: 1.05;
+    }
+
+    .hero-copy p {
+      margin: 0 0 18px;
+      max-width: 54ch;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    .hero-badges {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .badge {
+      background: var(--soft);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+
+    .menu-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .menu-btn {
+      min-width: 190px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      font-weight: 800;
+      transition: transform 0.14s ease, opacity 0.14s ease, background 0.14s ease;
+    }
+
+    .menu-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .menu-btn.primary {
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+      color: #10210d;
+    }
+
+    .menu-btn.secondary {
+      background: var(--soft);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .hero-side {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .mini-card {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .mini-card h3,
+    .mini-card h4 {
+      margin: 0 0 8px;
+    }
+
+    .mini-card p,
+    .mini-card li {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .mini-card ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .back-row {
+      margin-bottom: 14px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .back-btn {
+      width: auto;
+      padding: 11px 14px;
+      border-radius: 12px;
+      background: var(--soft);
+      color: var(--text);
+      border: 1px solid var(--border);
+      font-weight: 700;
+    }
+
+    .finder-layout,
+    .practice-layout {
+      padding: 18px;
+    }
+
+    .finder-grid,
+    .practice-grid {
       display: grid;
       grid-template-columns: 340px 1fr;
       gap: 18px;
     }
 
-    .panel {
-      background: var(--bg-panel);
+    .panel-card {
+      background: var(--panel-2);
       border: 1px solid var(--border);
       border-radius: 18px;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(8px);
+      padding: 16px;
+      min-width: 0;
     }
 
-    .left-panel {
-      padding: 18px;
-      position: sticky;
-      top: 24px;
-      height: fit-content;
-    }
-
-    .main-panel {
-      padding: 18px;
-      background: var(--bg-panel-2);
-    }
-
-    .section-title {
-      margin: 0 0 10px;
-      font-size: 14px;
+    .panel-title {
+      margin: 0 0 12px;
+      font-size: 13px;
       text-transform: uppercase;
       letter-spacing: 1px;
-      color: var(--text-muted);
-    }
-
-    .match-card {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 18px;
-    }
-
-    .player-box {
-      background: var(--bg-box);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px;
-      min-height: 82px;
-    }
-
-    .player-box small {
-      display: block;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      font-size: 11px;
-    }
-
-    .player-name {
-      font-weight: 700;
-      font-size: 18px;
-      word-break: break-word;
-    }
-
-    .vs-badge {
-      background: var(--danger);
-      color: white;
-      border-radius: 999px;
-      padding: 8px 12px;
-      font-weight: 700;
-      font-size: 12px;
-      box-shadow: 0 8px 18px rgba(255, 107, 107, 0.25);
+      color: var(--muted);
     }
 
     .label {
       display: block;
-      margin: 10px 0 6px;
+      margin: 12px 0 6px;
       font-size: 13px;
-      color: var(--text-muted);
       font-weight: 700;
+      color: var(--muted);
     }
 
-    input, select, button {
+    input[type="text"],
+    input[type="number"],
+    select {
       width: 100%;
+      background: var(--soft);
+      color: var(--text);
       border: 1px solid var(--border);
-      background: rgba(255,255,255,0.04);
-      color: var(--text-main);
-      border-radius: 12px;
-      padding: 12px 13px;
-      font-size: 15px;
+      border-radius: 14px;
+      padding: 12px 14px;
       outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      transition: border-color 0.14s ease, box-shadow 0.14s ease, background 0.14s ease;
+    }
+
+    select {
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+        linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+      background-position:
+        calc(100% - 20px) calc(50% - 3px),
+        calc(100% - 14px) calc(50% - 3px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      padding-right: 42px;
     }
 
     input::placeholder {
-      color: var(--text-muted);
+      color: var(--muted);
     }
 
-    input:focus, select:focus, button:focus {
+    input:focus,
+    select:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(119, 227, 106, 0.15);
+      box-shadow: 0 0 0 3px rgba(134, 239, 108, 0.15);
+      background: var(--soft-2);
     }
 
-    .letter-box {
-      margin-top: 12px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+    .finder-stats,
+    .practice-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .stat-box {
+      background: var(--soft);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px 16px;
-      text-align: center;
+      border-radius: 14px;
+      padding: 12px;
     }
 
-    .letter-label {
-      font-size: 12px;
-      color: var(--text-muted);
+    .stat-box small {
+      display: block;
+      color: var(--muted);
       text-transform: uppercase;
-      letter-spacing: 0.9px;
-      margin-bottom: 8px;
+      letter-spacing: 0.7px;
+      font-size: 11px;
+      margin-bottom: 6px;
     }
 
-    .letter-display {
-      font-size: 34px;
-      font-weight: 800;
-      letter-spacing: 4px;
-      min-height: 40px;
-      color: var(--accent-2);
-    }
-
-    .helper-text {
-      margin-top: 10px;
-      font-size: 12px;
-      color: var(--text-muted);
-      line-height: 1.5;
+    .stat-box strong {
+      font-size: 20px;
     }
 
     .results-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
     }
 
     .result-card {
-      background: var(--bg-box);
+      background: var(--soft);
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 14px;
-      min-height: 180px;
+      min-height: 190px;
     }
 
-    .result-card h2 {
+    .result-card h3 {
       margin: 0 0 10px;
       font-size: 16px;
     }
 
-    .word {
+    .word-chip {
       display: inline-block;
+      margin: 0 6px 6px 0;
       padding: 7px 10px;
-      margin: 4px 4px 0 0;
-      background: rgba(119, 227, 106, 0.08);
-      border: 1px solid rgba(119, 227, 106, 0.16);
       border-radius: 10px;
+      background: rgba(134, 239, 108, 0.08);
+      border: 1px solid rgba(134, 239, 108, 0.15);
       font-size: 14px;
       word-break: break-word;
     }
 
     .highlight {
-      background: var(--highlight);
+      background: var(--warning);
       color: #111;
-      padding: 0 2px;
       border-radius: 4px;
+      padding: 0 2px;
     }
 
     .empty-state {
-      color: var(--text-muted);
+      color: var(--muted);
       font-size: 14px;
-      padding: 10px 2px 2px;
+      line-height: 1.6;
+    }
+
+    .matchup-box {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .player-card {
+      background: var(--soft);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      min-height: 84px;
+    }
+
+    .player-card small {
+      display: block;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .player-card strong {
+      font-size: 19px;
+      word-break: break-word;
+    }
+
+    .vs-pill {
+      background: var(--danger);
+      color: white;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      box-shadow: 0 10px 22px rgba(255, 102, 102, 0.24);
+    }
+
+    .prompt-box {
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .prompt-box small {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .prompt-value {
+      font-size: 42px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      color: var(--accent);
+      min-height: 52px;
+    }
+
+    .practice-buttons,
+    .utility-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .action-btn {
+      flex: 1 1 140px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-weight: 800;
+      background: var(--soft);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .action-btn.primary {
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+      color: #10210d;
+      border: none;
+    }
+
+    .progress-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .progress-card {
+      background: var(--soft);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .progress-card h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .progress-card p,
+    .progress-card li {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .progress-card ul {
+      margin: 0;
+      padding-left: 18px;
     }
 
     .footer {
@@ -286,64 +544,53 @@
       align-items: center;
       gap: 10px;
       flex-wrap: wrap;
-      color: var(--text-muted);
+      color: var(--muted);
       font-size: 13px;
     }
 
-    .discord-link {
-      width: 38px;
-      height: 38px;
-      border-radius: 999px;
+    .discord-line {
       display: inline-flex;
-      justify-content: center;
       align-items: center;
-      color: var(--text-main);
-      background: var(--bg-box);
+      gap: 8px;
+      background: var(--soft);
       border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 12px;
       text-decoration: none;
-      transition: transform 0.15s ease;
     }
 
-    .discord-link:hover {
-      transform: scale(1.05);
-    }
-
-    .discord-link svg {
-      width: 20px;
-      height: 20px;
+    .discord-line svg {
+      width: 18px;
+      height: 18px;
       fill: currentColor;
+      flex: 0 0 auto;
     }
 
     .log-toggle {
       position: fixed;
       right: 18px;
       bottom: 18px;
-      z-index: 20;
+      z-index: 40;
       width: auto;
       padding: 12px 16px;
       border-radius: 999px;
-      background: var(--accent);
-      color: #111;
-      font-weight: 800;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+      color: #10210d;
+      font-weight: 900;
+      box-shadow: var(--shadow);
     }
 
     .log-panel {
       position: fixed;
       right: 18px;
       bottom: 74px;
-      width: min(360px, calc(100vw - 36px));
-      max-height: 60vh;
-      overflow-y: auto;
-      background: var(--bg-panel-2);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
+      width: min(380px, calc(100vw - 36px));
+      max-height: 68vh;
       padding: 16px;
-      z-index: 21;
+      overflow-y: auto;
       display: none;
+      z-index: 41;
+      background: var(--panel-2);
     }
 
     .log-panel.open {
@@ -352,13 +599,13 @@
 
     .log-panel h3 {
       margin: 0 0 12px;
-      font-size: 18px;
+      font-size: 19px;
     }
 
     .log-entry {
-      border-top: 1px solid var(--border);
       padding-top: 12px;
       margin-top: 12px;
+      border-top: 1px solid var(--border);
     }
 
     .log-entry:first-of-type {
@@ -369,166 +616,322 @@
 
     .log-date {
       font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 4px;
+      color: var(--muted);
       text-transform: uppercase;
       letter-spacing: 0.8px;
+      margin-bottom: 4px;
     }
 
     .log-version {
       font-size: 15px;
-      font-weight: 700;
+      font-weight: 800;
       margin-bottom: 6px;
     }
 
     .log-entry ul {
       margin: 0;
       padding-left: 18px;
-      color: var(--text-main);
+    }
+
+    .log-entry li {
+      color: var(--text);
+      line-height: 1.55;
+      font-size: 14px;
     }
 
     .close-log {
-      margin-top: 12px;
-      background: var(--bg-box);
-      cursor: pointer;
+      margin-top: 14px;
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 12px;
+      background: var(--soft);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-weight: 700;
     }
 
-    @media (max-width: 900px) {
-      .layout {
+    @media (max-width: 980px) {
+      .hero-grid,
+      .finder-grid,
+      .practice-grid {
         grid-template-columns: 1fr;
       }
 
-      .left-panel {
-        position: static;
+      .results-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 14px;
+      }
+
+      .brand-wrap h1 {
+        font-size: 28px;
+      }
+
+      .hero-copy h2 {
+        font-size: 30px;
       }
 
       .results-grid {
         grid-template-columns: 1fr;
       }
-    }
 
-    @media (max-width: 520px) {
-      body {
-        padding: 14px;
-      }
-
-      .brand h1 {
-        font-size: 24px;
-      }
-
-      .match-card {
+      .matchup-box {
         grid-template-columns: 1fr;
       }
 
-      .vs-badge {
+      .vs-pill {
         justify-self: center;
       }
 
-      .letter-display {
-        font-size: 28px;
+      .prompt-value {
+        font-size: 34px;
       }
     }
   </style>
 </head>
 <body class="original">
-  <div class="page">
+  <div class="app-shell">
     <div class="topbar">
-      <div class="brand">
+      <div class="brand-wrap">
         <h1>Word Bomb Learner</h1>
-        <p>Practice fast word finding with a cleaner game-style layout.</p>
+        <p>Word finder, custom practice mode, and cleaner bomb-style training in one place.</p>
       </div>
 
-      <select id="mode" class="theme-select" onchange="setTheme(this.value)">
+      <select id="themeMode" class="theme-picker">
         <option value="original">Original</option>
         <option value="dark">Dark</option>
         <option value="light">Light</option>
       </select>
     </div>
 
-    <div class="layout">
-      <div class="panel left-panel">
-        <div class="section-title">Practice Match</div>
+    <section id="homeScreen" class="screen active">
+      <div class="hero-panel">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <h2>Train faster. Search cleaner. Practice smarter.</h2>
+            <p>
+              Use the word finder to explore matches, then jump into a separate practice mode with custom timer settings,
+              prompt limits, and a fake opponent to simulate game pressure.
+            </p>
 
-        <div class="match-card">
-          <div class="player-box">
-            <small>You</small>
-            <div class="player-name" id="practiceYou">---</div>
+            <div class="hero-badges">
+              <span class="badge">Word finder</span>
+              <span class="badge">Custom practice mode</span>
+              <span class="badge">Hyphen + apostrophe support</span>
+              <span class="badge">Update log built in</span>
+            </div>
+
+            <div class="menu-actions">
+              <button class="menu-btn primary" id="openFinderBtn">Open Word Finder</button>
+              <button class="menu-btn secondary" id="openPracticeBtn">Enter Practice Mode</button>
+            </div>
           </div>
 
-          <div class="vs-badge">VS</div>
+          <div class="hero-side">
+            <div class="mini-card">
+              <h3>What’s fixed</h3>
+              <ul>
+                <li>Casual mode is now neutral and does not hide long or special words.</li>
+                <li>Dropdowns use custom styling instead of the default bright browser look.</li>
+                <li>Word categories now include apostrophe words too.</li>
+              </ul>
+            </div>
 
-          <div class="player-box">
-            <small>Opponent</small>
-            <div class="player-name" id="practiceOpponent">someone</div>
-          </div>
-        </div>
-
-        <label class="label" for="pattern">Letters</label>
-        <input id="pattern" type="text" placeholder="Type letters like an, re, th..." />
-
-        <label class="label" for="filterMode">Match Type</label>
-        <select id="filterMode">
-          <option value="contains">Contains</option>
-          <option value="starts">Starts With</option>
-        </select>
-
-        <label class="label" for="wordMode">Word Type</label>
-        <select id="wordMode">
-          <option value="casual">Casual Words</option>
-          <option value="long">Long Words Only</option>
-          <option value="hyphen">Hyphen Only</option>
-          <option value="all">All Words</option>
-        </select>
-
-        <div class="letter-box">
-          <div class="letter-label">Current Practice Letters</div>
-          <div class="letter-display" id="letterDisplay">--</div>
-        </div>
-
-        <div class="helper-text">
-          Press left Ctrl to reshuffle the random list after searching.
-          <br />
-          To change the fake opponent later, edit:
-          <br />
-          <strong>PRACTICE_OPPONENT_NAME</strong>
-        </div>
-
-        <div class="footer">
-          <span>Made by r2ya</span>
-
-          <a
-            class="discord-link"
-            href="https://discord.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Discord"
-            title="Discord"
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M20.317 4.369a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.211.375-.444.864-.608 1.249a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.249.077.077 0 0 0-.079-.037 19.736 19.736 0 0 0-4.885 1.515.069.069 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.927 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.009c.12.099.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.04.107c.36.698.772 1.363 1.225 1.993a.076.076 0 0 0 .084.028 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .031-.056c.5-5.177-.838-9.674-3.548-13.66a.061.061 0 0 0-.031-.03ZM8.02 15.331c-1.183 0-2.157-1.085-2.157-2.418 0-1.333.955-2.418 2.157-2.418 1.21 0 2.176 1.094 2.157 2.418 0 1.333-.956 2.418-2.157 2.418Zm7.975 0c-1.183 0-2.157-1.085-2.157-2.418 0-1.333.955-2.418 2.157-2.418 1.21 0 2.176 1.094 2.157 2.418 0 1.333-.947 2.418-2.157 2.418Z"></path>
-            </svg>
-          </a>
-        </div>
-      </div>
-
-      <div class="panel main-panel">
-        <div class="section-title">Results</div>
-        <div id="results" class="results-grid">
-          <div class="result-card">
-            <h2>Longest</h2>
-            <div class="empty-state">Search for letters to see matching words.</div>
-          </div>
-          <div class="result-card">
-            <h2>Shortest</h2>
-            <div class="empty-state">Use the filters on the left to narrow words.</div>
-          </div>
-          <div class="result-card">
-            <h2>Random</h2>
-            <div class="empty-state">Press left Ctrl after searching to reshuffle random words.</div>
+            <div class="mini-card">
+              <h4>Practice mode</h4>
+              <p>
+                Separate screen, fake opponent named <strong>samsicle</strong>, editable timer,
+                prompt caps, and a prompt generator designed for repeated solving.
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
+
+    <section id="finderScreen" class="screen">
+      <div class="back-row">
+        <button class="back-btn" data-go="homeScreen">← Back to Home</button>
+        <button class="back-btn" data-go="practiceScreen">Go to Practice Mode</button>
+      </div>
+
+      <div class="finder-layout">
+        <div class="finder-grid">
+          <div class="panel-card">
+            <h2 class="panel-title">Word Finder</h2>
+
+            <label class="label" for="finderPattern">Letters</label>
+            <input id="finderPattern" type="text" placeholder="Type letters like an, ee, tri..." />
+
+            <label class="label" for="finderMatchMode">Match Type</label>
+            <select id="finderMatchMode">
+              <option value="contains">Contains</option>
+              <option value="starts">Starts With</option>
+            </select>
+
+            <label class="label" for="finderWordMode">Word Type</label>
+            <select id="finderWordMode">
+              <option value="casual">Casual / Neutral</option>
+              <option value="long">Long Words Only</option>
+              <option value="hyphen">Hyphen Words Only</option>
+              <option value="apostrophe">Apostrophe Words Only</option>
+              <option value="plain">Plain Words Only</option>
+            </select>
+
+            <div class="finder-stats">
+              <div class="stat-box">
+                <small>Current letters</small>
+                <strong id="finderLetters">--</strong>
+              </div>
+              <div class="stat-box">
+                <small>Total matches</small>
+                <strong id="finderCount">0</strong>
+              </div>
+            </div>
+
+            <div class="utility-row">
+              <button class="action-btn" id="shuffleFinderBtn">Shuffle random</button>
+              <button class="action-btn" id="clearFinderBtn">Clear search</button>
+            </div>
+
+            <div class="footer">
+              <span>Made by r2ya</span>
+              <a
+                class="discord-line"
+                href="https://discord.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Discord"
+                title="Discord"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M20.317 4.369a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.211.375-.444.864-.608 1.249a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.249.077.077 0 0 0-.079-.037 19.736 19.736 0 0 0-4.885 1.515.069.069 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128c.126-.094.252-.192.372-.291a.074.074 0 0 1 .077-.01c3.927 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.009c.12.099.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.04.107c.36.698.772 1.363 1.225 1.993a.076.076 0 0 0 .084.028 19.84 19.84 0 0 0 6.002-3.03.077.077 0 0 0 .031-.056c.5-5.177-.838-9.674-3.548-13.66a.061.061 0 0 0-.031-.03ZM8.02 15.331c-1.183 0-2.157-1.085-2.157-2.418 0-1.333.955-2.418 2.157-2.418 1.21 0 2.176 1.094 2.157 2.418 0 1.333-.956 2.418-2.157 2.418Zm7.975 0c-1.183 0-2.157-1.085-2.157-2.418 0-1.333.955-2.418 2.157-2.418 1.21 0 2.176 1.094 2.157 2.418 0 1.333-.947 2.418-2.157 2.418Z"></path>
+                </svg>
+                <span>- ry0842</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <h2 class="panel-title">Results</h2>
+            <div id="finderResults" class="results-grid"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="practiceScreen" class="screen">
+      <div class="back-row">
+        <button class="back-btn" data-go="homeScreen">← Back to Home</button>
+        <button class="back-btn" data-go="finderScreen">Go to Word Finder</button>
+      </div>
+
+      <div class="practice-layout">
+        <div class="practice-grid">
+          <div class="panel-card">
+            <h2 class="panel-title">Practice Setup</h2>
+
+            <div class="matchup-box">
+              <div class="player-card">
+                <small>You</small>
+                <strong>---</strong>
+              </div>
+              <div class="vs-pill">VS</div>
+              <div class="player-card">
+                <small>Opponent</small>
+                <strong id="practiceOpponentName">samsicle</strong>
+              </div>
+            </div>
+
+            <label class="label" for="practiceTimer">Bomb timer (seconds)</label>
+            <input id="practiceTimer" type="number" min="2" max="60" value="8" />
+
+            <label class="label" for="practiceWpp">Max words per prompt</label>
+            <input id="practiceWpp" type="number" min="1" max="500" value="25" />
+
+            <label class="label" for="practiceTotalPrompts">Total solves / prompts</label>
+            <input id="practiceTotalPrompts" type="number" min="1" max="500" value="20" />
+
+            <label class="label" for="practiceWordMode">Allowed word types</label>
+            <select id="practiceWordMode">
+              <option value="casual">Casual / Neutral</option>
+              <option value="long">Long Words Only</option>
+              <option value="hyphen">Hyphen Words Only</option>
+              <option value="apostrophe">Apostrophe Words Only</option>
+              <option value="plain">Plain Words Only</option>
+            </select>
+
+            <label class="label" for="practiceMatchMode">Prompt match type</label>
+            <select id="practiceMatchMode">
+              <option value="contains">Contains</option>
+              <option value="starts">Starts With</option>
+            </select>
+
+            <div class="practice-buttons">
+              <button class="action-btn primary" id="generatePromptBtn">Generate Prompt</button>
+              <button class="action-btn" id="resetPracticeBtn">Reset Practice</button>
+            </div>
+
+            <div class="practice-stats">
+              <div class="stat-box">
+                <small>Prompt</small>
+                <strong id="practicePromptCount">0</strong>
+              </div>
+              <div class="stat-box">
+                <small>Allowed solves</small>
+                <strong id="practiceAllowedCount">0</strong>
+              </div>
+              <div class="stat-box">
+                <small>Timer</small>
+                <strong id="practiceTimerDisplay">8s</strong>
+              </div>
+              <div class="stat-box">
+                <small>Total target</small>
+                <strong id="practiceTargetDisplay">20</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <h2 class="panel-title">Practice Session</h2>
+
+            <div class="prompt-box">
+              <small>Current prompt</small>
+              <div class="prompt-value" id="practicePrompt">--</div>
+            </div>
+
+            <div class="progress-list">
+              <div class="progress-card">
+                <h3>How it works</h3>
+                <p>
+                  Generate a prompt and the site checks how many valid words exist for that prompt
+                  using your current settings. If only one valid answer exists, like a rare prompt case,
+                  the allowed solve count drops to 1 automatically instead of pretending there are more.
+                </p>
+              </div>
+
+              <div class="progress-card">
+                <h3>Prompt details</h3>
+                <ul>
+                  <li><strong>Matching words found:</strong> <span id="practiceMatchCount">0</span></li>
+                  <li><strong>Allowed solves this round:</strong> <span id="practiceSolveCount">0</span></li>
+                  <li><strong>Suggested timer:</strong> <span id="practiceRoundTimer">8s</span></li>
+                </ul>
+              </div>
+
+              <div class="progress-card">
+                <h3>Sample answers</h3>
+                <p id="practiceSampleWords" class="empty-state">Generate a prompt to preview matching words.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 
   <button class="log-toggle" id="logToggle">View Update Log</button>
@@ -538,23 +941,25 @@
 
     <div class="log-entry">
       <div class="log-date">May 4, 2026</div>
-      <div class="log-version">v1.2</div>
+      <div class="log-version">v2.0</div>
       <ul>
-        <li>Fixed the Long Words Only filter so it now works properly.</li>
-        <li>Changed Made by r2ya1 to Made by r2ya.</li>
-        <li>Added a Discord icon button.</li>
-        <li>Added a practice match layout with a fake opponent.</li>
-        <li>Added this update log panel.</li>
+        <li>Rebuilt the site into one-file multi-screen layout.</li>
+        <li>Added separate Word Finder and Practice Mode screens.</li>
+        <li>Fixed casual mode so it acts as neutral instead of hiding long or special words.</li>
+        <li>Added apostrophe word filtering.</li>
+        <li>Updated practice opponent to samsicle.</li>
+        <li>Added Discord tag display: ry0842.</li>
+        <li>Improved dropdown styling and overall polish.</li>
       </ul>
     </div>
 
     <div class="log-entry">
-      <div class="log-date">Future Update</div>
-      <div class="log-version">Edit this section anytime</div>
+      <div class="log-date">Edit anytime</div>
+      <div class="log-version">How to update</div>
       <ul>
-        <li>Change the date.</li>
-        <li>Change the version number.</li>
-        <li>Add your new changes here.</li>
+        <li>Change the date line.</li>
+        <li>Change the version line.</li>
+        <li>Add or remove bullet points for your changes.</li>
       </ul>
     </div>
 
@@ -563,37 +968,22 @@
 
   <script>
     let words = [];
-    let lastPattern = "";
-    let lastMatches = [];
+    let lastFinderPattern = "";
+    let lastFinderMatches = [];
+    const PRACTICE_OPPONENT_NAME = "samsicle";
 
-    const PRACTICE_OPPONENT_NAME = "someone";
+    const screens = ["homeScreen", "finderScreen", "practiceScreen"];
 
-    fetch("https://raw.githubusercontent.com/r2ya1/expandyourdictionary/main/assets.json")
-      .then(response => {
-        if (!response.ok) throw new Error("Network response was not ok");
-        return response.json();
-      })
-      .then(obj => {
-        const decoded = atob(obj.data);
-        words = JSON.parse(decoded)
-          .map(w => String(w).toLowerCase().trim())
-          .filter(Boolean);
-
-        updatePracticeNames();
-      })
-      .catch(error => {
-        console.error("Failed to load dictionary:", error);
-        document.getElementById("results").innerHTML = `
-          <div class="result-card" style="grid-column: 1 / -1;">
-            <h2>Error</h2>
-            <div class="empty-state">Failed to load dictionary. Check assets.json or the fetch link.</div>
-          </div>
-        `;
+    function showScreen(id) {
+      screens.forEach(screenId => {
+        const el = document.getElementById(screenId);
+        if (el) el.classList.toggle("active", screenId === id);
       });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
 
-    function updatePracticeNames() {
-      document.getElementById("practiceYou").textContent = "---";
-      document.getElementById("practiceOpponent").textContent = PRACTICE_OPPONENT_NAME;
+    function setTheme(value) {
+      document.body.className = value;
     }
 
     function shuffleArray(array) {
@@ -611,34 +1001,33 @@
       return word.replace(regex, '<span class="highlight">$1</span>');
     }
 
-    function applyPatternFilter(list, pattern, filterMode) {
-      if (filterMode === "contains") {
-        return list.filter(word => word.includes(pattern));
-      }
-      return list.filter(word => word.startsWith(pattern));
+    function applyPatternFilter(list, pattern, matchMode) {
+      if (!pattern) return list;
+      if (matchMode === "starts") return list.filter(word => word.startsWith(pattern));
+      return list.filter(word => word.includes(pattern));
     }
 
-    function applyWordModeFilter(list, wordMode) {
-      if (wordMode === "casual") {
-        return list.filter(word => word.length <= 8 && !word.includes("-"));
+    function applyWordModeFilter(list, mode) {
+      if (mode === "long") {
+        return list.filter(word => word.length >= 10 && !word.includes("-") && !word.includes("'"));
       }
-
-      if (wordMode === "long") {
-        return list.filter(word => word.length >= 10 && !word.includes("-"));
-      }
-
-      if (wordMode === "hyphen") {
+      if (mode === "hyphen") {
         return list.filter(word => word.includes("-"));
       }
-
+      if (mode === "apostrophe") {
+        return list.filter(word => word.includes("'"));
+      }
+      if (mode === "plain") {
+        return list.filter(word => !word.includes("-") && !word.includes("'"));
+      }
       return list;
     }
 
-    function buildCard(title, wordsList) {
+    function buildResultCard(title, wordsList, pattern) {
       const card = document.createElement("div");
       card.className = "result-card";
 
-      const heading = document.createElement("h2");
+      const heading = document.createElement("h3");
       heading.textContent = title;
       card.appendChild(heading);
 
@@ -651,110 +1040,194 @@
       }
 
       wordsList.forEach(word => {
-        const span = document.createElement("span");
-        span.className = "word";
-        span.innerHTML = highlightMatch(word, lastPattern);
-        card.appendChild(span);
+        const chip = document.createElement("span");
+        chip.className = "word-chip";
+        chip.innerHTML = highlightMatch(word, pattern);
+        card.appendChild(chip);
       });
 
       return card;
     }
 
-    function displayWords(matches) {
-      const resultsDiv = document.getElementById("results");
-      resultsDiv.innerHTML = "";
+    function renderFinderResults(matches) {
+      const results = document.getElementById("finderResults");
+      results.innerHTML = "";
+
+      const longest = [...matches].sort((a, b) => b.length - a.length).slice(0, 4);
+      const shortest = [...matches].sort((a, b) => a.length - b.length).slice(0, 4);
+      const random = shuffleArray(matches).slice(0, 4);
+      const hyphenated = matches.filter(word => word.includes("-")).slice(0, 4);
+      const apostrophes = matches.filter(word => word.includes("'")).slice(0, 4);
+
+      results.appendChild(buildResultCard("Longest", longest, lastFinderPattern));
+      results.appendChild(buildResultCard("Shortest", shortest, lastFinderPattern));
+      results.appendChild(buildResultCard("Random", random, lastFinderPattern));
+      results.appendChild(buildResultCard("Apostrophes", apostrophes, lastFinderPattern));
+
+      if (document.getElementById("finderWordMode").value === "hyphen") {
+        results.innerHTML = "";
+        results.appendChild(buildResultCard("Hyphenated", random, lastFinderPattern));
+        results.appendChild(buildResultCard("Shortest", [], lastFinderPattern));
+        results.appendChild(buildResultCard("Random", [], lastFinderPattern));
+        results.appendChild(buildResultCard("Apostrophes", [], lastFinderPattern));
+      }
+
+      if (document.getElementById("finderWordMode").value === "apostrophe") {
+        results.innerHTML = "";
+        results.appendChild(buildResultCard("Apostrophes", random, lastFinderPattern));
+        results.appendChild(buildResultCard("Longest", [], lastFinderPattern));
+        results.appendChild(buildResultCard("Shortest", [], lastFinderPattern));
+        results.appendChild(buildResultCard("Random", [], lastFinderPattern));
+      }
 
       if (!matches.length) {
-        resultsDiv.appendChild(buildCard("Longest", []));
-        resultsDiv.appendChild(buildCard("Shortest", []));
-        resultsDiv.appendChild(buildCard("Random", []));
-        return;
+        results.innerHTML = "";
+        results.appendChild(buildResultCard("Longest", [], lastFinderPattern));
+        results.appendChild(buildResultCard("Shortest", [], lastFinderPattern));
+        results.appendChild(buildResultCard("Random", [], lastFinderPattern));
+        results.appendChild(buildResultCard("Apostrophes", [], lastFinderPattern));
       }
-
-      const wordMode = document.getElementById("wordMode").value;
-      const longest = [...matches].sort((a, b) => b.length - a.length).slice(0, 3);
-      const shortest = [...matches].sort((a, b) => a.length - b.length).slice(0, 3);
-      const random = shuffleArray(matches).slice(0, 3);
-
-      if (wordMode === "hyphen") {
-        resultsDiv.appendChild(buildCard("Hyphenated", random));
-        resultsDiv.appendChild(buildCard("Shortest", []));
-        resultsDiv.appendChild(buildCard("Random", []));
-        return;
-      }
-
-      resultsDiv.appendChild(buildCard("Longest", longest));
-      resultsDiv.appendChild(buildCard("Shortest", shortest));
-      resultsDiv.appendChild(buildCard("Random", random));
     }
 
-    function findWords() {
-      const pattern = document.getElementById("pattern").value.toLowerCase().trim();
-      const filterMode = document.getElementById("filterMode").value;
-      const wordMode = document.getElementById("wordMode").value;
+    function runFinderSearch() {
+      const pattern = document.getElementById("finderPattern").value.toLowerCase().trim();
+      const matchMode = document.getElementById("finderMatchMode").value;
+      const wordMode = document.getElementById("finderWordMode").value;
 
-      document.getElementById("letterDisplay").textContent = pattern ? pattern.toUpperCase() : "--";
+      document.getElementById("finderLetters").textContent = pattern ? pattern.toUpperCase() : "--";
 
       if (!pattern) {
-        document.getElementById("results").innerHTML = `
-          <div class="result-card">
-            <h2>Longest</h2>
-            <div class="empty-state">Search for letters to see matching words.</div>
-          </div>
-          <div class="result-card">
-            <h2>Shortest</h2>
-            <div class="empty-state">Use the filters on the left to narrow words.</div>
-          </div>
-          <div class="result-card">
-            <h2>Random</h2>
-            <div class="empty-state">Press left Ctrl after searching to reshuffle random words.</div>
-          </div>
-        `;
-        lastPattern = "";
-        lastMatches = [];
+        lastFinderPattern = "";
+        lastFinderMatches = [];
+        document.getElementById("finderCount").textContent = "0";
+        renderFinderResults([]);
         return;
       }
 
-      lastPattern = pattern;
+      lastFinderPattern = pattern;
 
-      let filtered = applyPatternFilter(words, pattern, filterMode);
+      let filtered = applyPatternFilter(words, pattern, matchMode);
       filtered = applyWordModeFilter(filtered, wordMode);
 
-      lastMatches = filtered;
-      displayWords(lastMatches);
+      lastFinderMatches = filtered;
+      document.getElementById("finderCount").textContent = String(filtered.length);
+      renderFinderResults(filtered);
     }
 
-    document.addEventListener("keydown", event => {
-      if (event.code === "ControlLeft" && lastPattern && lastMatches.length) {
-        const resultsDiv = document.getElementById("results");
-        const wordMode = document.getElementById("wordMode").value;
-        const random = shuffleArray(lastMatches).slice(0, 3);
+    function clearFinder() {
+      document.getElementById("finderPattern").value = "";
+      document.getElementById("finderMatchMode").value = "contains";
+      document.getElementById("finderWordMode").value = "casual";
+      runFinderSearch();
+    }
 
-        if (wordMode === "hyphen") {
-          resultsDiv.innerHTML = "";
-          resultsDiv.appendChild(buildCard("Hyphenated", random));
-          resultsDiv.appendChild(buildCard("Shortest", []));
-          resultsDiv.appendChild(buildCard("Random", []));
-          return;
+    function getAllPromptCandidates(mode) {
+      const base = applyWordModeFilter(words, mode)
+        .filter(word => word.length >= 2)
+        .map(word => word.toLowerCase());
+
+      const prompts = new Set();
+
+      base.forEach(word => {
+        for (let i = 0; i < word.length - 1; i++) {
+          const pair = word.slice(i, i + 2);
+          if (/^[a-z'-]{2}$/.test(pair)) prompts.add(pair);
         }
+      });
 
-        const longest = [...lastMatches].sort((a, b) => b.length - a.length).slice(0, 3);
-        const shortest = [...lastMatches].sort((a, b) => a.length - b.length).slice(0, 3);
+      return [...prompts];
+    }
 
-        resultsDiv.innerHTML = "";
-        resultsDiv.appendChild(buildCard("Longest", longest));
-        resultsDiv.appendChild(buildCard("Shortest", shortest));
-        resultsDiv.appendChild(buildCard("Random", random));
+    function generatePracticePrompt() {
+      const wordMode = document.getElementById("practiceWordMode").value;
+      const matchMode = document.getElementById("practiceMatchMode").value;
+      const maxWordsPerPrompt = Math.max(1, Math.min(500, Number(document.getElementById("practiceWpp").value) || 1));
+      const timer = Math.max(2, Math.min(60, Number(document.getElementById("practiceTimer").value) || 8));
+      const totalPrompts = Math.max(1, Math.min(500, Number(document.getElementById("practiceTotalPrompts").value) || 20));
+
+      const promptPool = getAllPromptCandidates(wordMode);
+      const prompt = promptPool.length ? promptPool[Math.floor(Math.random() * promptPool.length)] : "";
+
+      document.getElementById("practiceOpponentName").textContent = PRACTICE_OPPONENT_NAME;
+      document.getElementById("practiceTimerDisplay").textContent = `${timer}s`;
+      document.getElementById("practiceRoundTimer").textContent = `${timer}s`;
+      document.getElementById("practiceTargetDisplay").textContent = String(totalPrompts);
+
+      if (!prompt) {
+        document.getElementById("practicePrompt").textContent = "--";
+        document.getElementById("practicePromptCount").textContent = "0";
+        document.getElementById("practiceAllowedCount").textContent = "0";
+        document.getElementById("practiceMatchCount").textContent = "0";
+        document.getElementById("practiceSolveCount").textContent = "0";
+        document.getElementById("practiceSampleWords").textContent = "No valid prompt could be generated with the current settings.";
+        return;
       }
+
+      let matches = applyPatternFilter(applyWordModeFilter(words, wordMode), prompt, matchMode);
+      matches = [...new Set(matches)];
+
+      const allowedSolves = Math.min(maxWordsPerPrompt, matches.length);
+      const sampleWords = matches.slice(0, 12);
+
+      document.getElementById("practicePrompt").textContent = prompt.toUpperCase();
+      document.getElementById("practicePromptCount").textContent = String(promptPool.length);
+      document.getElementById("practiceAllowedCount").textContent = String(allowedSolves);
+      document.getElementById("practiceMatchCount").textContent = String(matches.length);
+      document.getElementById("practiceSolveCount").textContent = String(allowedSolves);
+
+      if (!sampleWords.length) {
+        document.getElementById("practiceSampleWords").textContent = "No matching words found for this prompt.";
+      } else {
+        document.getElementById("practiceSampleWords").innerHTML = sampleWords
+          .map(word => `<span class="word-chip">${word}</span>`)
+          .join("");
+      }
+    }
+
+    function resetPractice() {
+      document.getElementById("practiceTimer").value = "8";
+      document.getElementById("practiceWpp").value = "25";
+      document.getElementById("practiceTotalPrompts").value = "20";
+      document.getElementById("practiceWordMode").value = "casual";
+      document.getElementById("practiceMatchMode").value = "contains";
+      document.getElementById("practicePrompt").textContent = "--";
+      document.getElementById("practicePromptCount").textContent = "0";
+      document.getElementById("practiceAllowedCount").textContent = "0";
+      document.getElementById("practiceMatchCount").textContent = "0";
+      document.getElementById("practiceSolveCount").textContent = "0";
+      document.getElementById("practiceTimerDisplay").textContent = "8s";
+      document.getElementById("practiceRoundTimer").textContent = "8s";
+      document.getElementById("practiceTargetDisplay").textContent = "20";
+      document.getElementById("practiceSampleWords").textContent = "Generate a prompt to preview matching words.";
+    }
+
+    document.getElementById("themeMode").addEventListener("change", e => {
+      setTheme(e.target.value);
     });
 
-    function setTheme(value) {
-      document.body.className = value;
-    }
+    document.getElementById("openFinderBtn").addEventListener("click", () => showScreen("finderScreen"));
+    document.getElementById("openPracticeBtn").addEventListener("click", () => showScreen("practiceScreen"));
 
-    document.getElementById("pattern").addEventListener("input", findWords);
-    document.getElementById("filterMode").addEventListener("change", findWords);
-    document.getElementById("wordMode").addEventListener("change", findWords);
+    document.querySelectorAll("[data-go]").forEach(btn => {
+      btn.addEventListener("click", () => showScreen(btn.getAttribute("data-go")));
+    });
+
+    document.getElementById("finderPattern").addEventListener("input", runFinderSearch);
+    document.getElementById("finderMatchMode").addEventListener("change", runFinderSearch);
+    document.getElementById("finderWordMode").addEventListener("change", runFinderSearch);
+    document.getElementById("shuffleFinderBtn").addEventListener("click", () => {
+      if (lastFinderMatches.length) renderFinderResults(lastFinderMatches);
+    });
+    document.getElementById("clearFinderBtn").addEventListener("click", clearFinder);
+
+    document.getElementById("generatePromptBtn").addEventListener("click", generatePracticePrompt);
+    document.getElementById("resetPracticeBtn").addEventListener("click", resetPractice);
+
+    document.addEventListener("keydown", event => {
+      if (event.code === "ControlLeft" && document.getElementById("finderScreen").classList.contains("active")) {
+        if (lastFinderMatches.length) renderFinderResults(lastFinderMatches);
+      }
+    });
 
     const logToggle = document.getElementById("logToggle");
     const logPanel = document.getElementById("logPanel");
@@ -768,7 +1241,30 @@
       logPanel.classList.remove("open");
     });
 
-    updatePracticeNames();
+    fetch("https://raw.githubusercontent.com/r2ya1/expandyourdictionary/main/assets.json")
+      .then(response => {
+        if (!response.ok) throw new Error("Network response was not ok");
+        return response.json();
+      })
+      .then(obj => {
+        const decoded = atob(obj.data);
+        words = JSON.parse(decoded)
+          .map(word => String(word).toLowerCase().trim())
+          .filter(Boolean);
+
+        resetPractice();
+        clearFinder();
+      })
+      .catch(error => {
+        console.error("Failed to load dictionary:", error);
+        const finderResults = document.getElementById("finderResults");
+        finderResults.innerHTML = "";
+        finderResults.appendChild(buildResultCard("Error", [], ""));
+        finderResults.querySelector(".empty-state").textContent =
+          "Failed to load dictionary. Check assets.json and the fetch/decode format.";
+        document.getElementById("practiceSampleWords").textContent =
+          "Dictionary failed to load, so practice prompts cannot be generated.";
+      });
   </script>
 </body>
 </html>
