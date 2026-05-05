@@ -420,6 +420,24 @@
       border: 1px solid rgba(134, 239, 108, 0.15);
       font-size: 14px;
       word-break: break-word;
+      color: var(--text);
+    }
+
+    .word-chip.copyable {
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+    }
+
+    .word-chip.copyable:hover {
+      transform: translateY(-1px);
+      background: rgba(134, 239, 108, 0.14);
+      border-color: rgba(134, 239, 108, 0.28);
+    }
+
+    .word-chip.copied {
+      background: rgba(120, 243, 159, 0.18);
+      border-color: rgba(120, 243, 159, 0.35);
     }
 
     .highlight {
@@ -1045,13 +1063,13 @@
 
     <div class="log-entry">
       <div class="log-date">May 4, 2026</div>
-      <div class="log-version">v2.2</div>
+      <div class="log-version">v2.3</div>
       <ul>
-        <li>Added lives selection, including infinite lives.</li>
-        <li>Changed practice prompts to use a minimum solves requirement instead of a maximum cap.</li>
-        <li>Set the default minimum solves requirement to 500 for easier prompts.</li>
-        <li>Made casual practice continue automatically after failed prompts.</li>
-        <li>Kept autofocus so the answer box stays ready while playing.</li>
+        <li>Added click-to-copy words in Word Finder.</li>
+        <li>Cached prompt pools for smoother practice performance.</li>
+        <li>Kept easier default prompts with minimum 500 solves.</li>
+        <li>Casual mode still auto-loads a new prompt after a fail.</li>
+        <li>Kept autofocus for faster typing between rounds.</li>
       </ul>
     </div>
 
@@ -1062,6 +1080,13 @@
     let words = [];
     let lastFinderPattern = "";
     let lastFinderMatches = [];
+    let promptCache = {
+      casual: {},
+      long: {},
+      hyphen: {},
+      apostrophe: {},
+      plain: {}
+    };
 
     const PRACTICE_OPPONENT_NAME = "samsicle";
 
@@ -1069,7 +1094,6 @@
     // - update .log-date
     // - update .log-version
     // - add/remove <li> entries only
-    // Nothing above is shown publicly on the page.
 
     const practiceState = {
       running: false,
@@ -1103,7 +1127,12 @@
     }
 
     function shuffleArray(array) {
-      return [...array].sort(() => Math.random() - 0.5);
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
     }
 
     function escapeRegExp(str) {
@@ -1115,6 +1144,34 @@
       const safePattern = escapeRegExp(pattern);
       const regex = new RegExp(`(${safePattern})`, "gi");
       return word.replace(regex, '<span class="highlight">$1</span>');
+    }
+
+    async function copyWordToClipboard(word, chipEl) {
+      try {
+        await navigator.clipboard.writeText(word);
+        const oldText = chipEl.getAttribute("data-original-html") || chipEl.innerHTML;
+        chipEl.classList.add("copied");
+        chipEl.innerHTML = "Copied!";
+        setTimeout(() => {
+          chipEl.classList.remove("copied");
+          chipEl.innerHTML = oldText;
+        }, 800);
+      } catch {
+        const temp = document.createElement("textarea");
+        temp.value = word;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand("copy");
+        document.body.removeChild(temp);
+
+        const oldText = chipEl.getAttribute("data-original-html") || chipEl.innerHTML;
+        chipEl.classList.add("copied");
+        chipEl.innerHTML = "Copied!";
+        setTimeout(() => {
+          chipEl.classList.remove("copied");
+          chipEl.innerHTML = oldText;
+        }, 800);
+      }
     }
 
     function applyPatternFilter(list, pattern, matchMode) {
@@ -1156,9 +1213,13 @@
       }
 
       wordsList.forEach(word => {
-        const chip = document.createElement("span");
-        chip.className = "word-chip";
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "word-chip copyable";
         chip.innerHTML = highlightMatch(word, pattern);
+        chip.setAttribute("data-original-html", chip.innerHTML);
+        chip.setAttribute("title", `Click to copy ${word}`);
+        chip.addEventListener("click", () => copyWordToClipboard(word, chip));
         card.appendChild(chip);
       });
 
@@ -1255,22 +1316,56 @@
       return [...prompts];
     }
 
+    function buildPromptCacheForMode(mode) {
+      const filteredWords = applyWordModeFilter(words, mode).map(word => word.toLowerCase());
+      const containsMap = {};
+      const startsMap = {};
+
+      filteredWords.forEach(word => {
+        const seenContains = new Set();
+
+        for (let i = 0; i < word.length - 1; i++) {
+          const pair = word.slice(i, i + 2);
+          if (!/^[a-z'-]{2}$/.test(pair)) continue;
+
+          if (!seenContains.has(pair)) {
+            if (!containsMap[pair]) containsMap[pair] = [];
+            containsMap[pair].push(word);
+            seenContains.add(pair);
+          }
+        }
+
+        const startPair = word.slice(0, 2);
+        if (/^[a-z'-]{2}$/.test(startPair)) {
+          if (!startsMap[startPair]) startsMap[startPair] = [];
+          startsMap[startPair].push(word);
+        }
+      });
+
+      promptCache[mode] = {
+        contains: containsMap,
+        starts: startsMap
+      };
+    }
+
+    function buildAllPromptCaches() {
+      ["casual", "long", "hyphen", "apostrophe", "plain"].forEach(buildPromptCacheForMode);
+    }
+
     function getLivesSetting() {
       return document.getElementById("practiceLives").value;
     }
 
     function getFilteredMatchesForPrompt(prompt, wordMode, matchMode) {
-      return [...new Set(
-        applyPatternFilter(applyWordModeFilter(words, wordMode), prompt, matchMode)
-      )];
+      const modeCache = promptCache[wordMode]?.[matchMode];
+      if (!modeCache) return [];
+      return modeCache[prompt] ? [...modeCache[prompt]] : [];
     }
 
     function getValidPromptPool(wordMode, matchMode, minMatches) {
-      const promptPool = getAllPromptCandidates(wordMode);
-      return promptPool.filter(prompt => {
-        const matches = getFilteredMatchesForPrompt(prompt, wordMode, matchMode);
-        return matches.length >= minMatches;
-      });
+      const modeCache = promptCache[wordMode]?.[matchMode];
+      if (!modeCache) return [];
+      return Object.keys(modeCache).filter(prompt => modeCache[prompt].length >= minMatches);
     }
 
     function getModeLabel(mode) {
@@ -1587,6 +1682,7 @@
           .map(word => String(word).toLowerCase().trim())
           .filter(Boolean);
 
+        buildAllPromptCaches();
         resetPractice();
         clearFinder();
       })
